@@ -3,6 +3,7 @@
 <html>
 <head>
   <title>JSP - Hello World</title>
+  <%@include file="common.jsp"%>
 </head>
 <body>
 <h1><%= "Hello World!" %></h1>
