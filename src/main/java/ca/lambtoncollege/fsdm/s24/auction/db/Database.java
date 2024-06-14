@@ -5,44 +5,82 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class Database {
-    public static void connect() {
-        // Database credentials
-        String jdbcURL = "jdbc:mysql://localhost:3306/auction";
-        String username = "fsdm";
-        String password = "fsdm";
+    private final static String jdbcURL = "jdbc:mysql://localhost:3306/auction";
+    private final static String username = "fsdm";
+    private final static String password = "fsdm";
 
-        // Initialize the connection object
-        Connection connection = null;
-
+    static {
         try {
-            // Load the MySQL JDBC driver
             Class.forName("com.mysql.cj.jdbc.Driver");
-
-            // Establish the connection
-            connection = DriverManager.getConnection(jdbcURL, username, password);
-
-            // If connection is successful
-            if (connection != null) {
-                System.out.println("Connected to the database successfully!");
-            } else {
-                System.out.println("Failed to make connection!");
-            }
-
         } catch (ClassNotFoundException e) {
-            System.out.println("MySQL JDBC Driver not found.");
-            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Connection getConnection() {
+        try {
+            return DriverManager.getConnection(jdbcURL, username, password);
         } catch (SQLException e) {
-            System.out.println("Connection failed! Check output console");
-            e.printStackTrace();
-        } finally {
-            // Close the connection
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void Initialize() {
+        try (var connection = Database.getConnection()) {
+            createTableIfNotExist(connection, "User", """
+                    CREATE TABLE User (
+                        id INT AUTO_INCREMENT PRIMARY KEY,
+                        name VARCHAR(500) NOT NULL,
+                        email VARCHAR(255) NOT NULL UNIQUE,
+                        password VARCHAR(255) NOT NULL
+                    );""");
+
+            createTableIfNotExist(connection, "Session", """
+                    CREATE TABLE Session (
+                          id INT AUTO_INCREMENT PRIMARY KEY,
+                          user_id INT,
+                          session_id VARCHAR(36) NOT NULL,
+                          created_at DATETIME NOT NULL,
+                          INDEX (session_id),
+                          INDEX (created_at),
+                          FOREIGN KEY (user_id) REFERENCES User(id)
+                      );""");
+
+            createTableIfNotExist(connection, "Auction", """
+                    CREATE TABLE Auction (
+                          id INT AUTO_INCREMENT PRIMARY KEY,
+                          name VARCHAR(500) NOT NULL,
+                          description VARCHAR(3000),
+                          min_bid DECIMAL(10, 2) NOT NULL,
+                          ends_at DATETIME NOT NULL,
+                          image BLOB,
+                          state VARCHAR(100) NOT NULL,
+                          created_by INT,
+                          INDEX (name),
+                          INDEX (state),
+                          FOREIGN KEY (created_by) REFERENCES User(id)
+                      );""");
+
+            createTableIfNotExist(connection, "Bid", """
+                    CREATE TABLE Bid (
+                          id INT AUTO_INCREMENT PRIMARY KEY,
+                          auction_id INT,
+                          created_by INT,
+                          amount DECIMAL(10, 2) NOT NULL,
+                          INDEX (auction_id, amount),
+                          FOREIGN KEY (auction_id) REFERENCES Auction(id),
+                          FOREIGN KEY (created_by) REFERENCES User(id)
+                      );""");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void createTableIfNotExist(Connection connection, String tableName, String createQuery) throws SQLException {
+        var tables = connection.getMetaData().getTables(null, null, tableName, null);
+
+        if (!tables.next()) {
+            connection.createStatement().execute(createQuery);
         }
     }
 }
