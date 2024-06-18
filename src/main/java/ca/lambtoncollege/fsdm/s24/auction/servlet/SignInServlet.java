@@ -28,8 +28,7 @@ public class SignInServlet extends HttpServlet {
         try {
             var user = UserService.signIn(email, password);
 
-            RequestDispatcher dispatcher = req.getRequestDispatcher("/");
-            dispatcher.forward(req, resp);
+            resp.sendRedirect(req.getContextPath() + "/");
         } catch (Exception e) {
             var errors = e instanceof ValidationException ? ((ValidationException) e).errors : new ArrayList<String>().add(e.getMessage());
 

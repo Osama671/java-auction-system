@@ -29,8 +29,7 @@ public class RegistrationServlet extends HttpServlet {
         try {
             UserService.createUser(email, name, password);
 
-            RequestDispatcher dispatcher = req.getRequestDispatcher("/");
-            dispatcher.forward(req, resp);
+            resp.sendRedirect(req.getContextPath() + "/");
         } catch (Exception e) {
             var errors = e instanceof ValidationException ? ((ValidationException) e).errors : new ArrayList<String>().add(e.getMessage());
 
