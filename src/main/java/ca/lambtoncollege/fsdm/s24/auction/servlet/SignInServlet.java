@@ -26,7 +26,7 @@ public class SignInServlet extends HttpServlet {
         var password = req.getParameter("password");
 
         try {
-            var user = UserService.signIn(email, password);
+            var session = UserService.signIn(email, password);
 
             resp.sendRedirect(req.getContextPath() + "/");
         } catch (Exception e) {

@@ -1,12 +1,15 @@
 package ca.lambtoncollege.fsdm.s24.auction.service;
 
 import ca.lambtoncollege.fsdm.s24.auction.error.ValidationException;
+import ca.lambtoncollege.fsdm.s24.auction.model.Session;
 import ca.lambtoncollege.fsdm.s24.auction.model.User;
+import ca.lambtoncollege.fsdm.s24.auction.repository.SessionRepository;
 import ca.lambtoncollege.fsdm.s24.auction.repository.UserRepository;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.regex.Matcher;
@@ -43,7 +46,7 @@ public class UserService {
         return UserRepository.findUser(email);
     }
 
-    public static User signIn(String email, String password) throws Exception {
+    public static Session signIn(String email, String password) throws SQLException, ValidationException, NoSuchAlgorithmException {
         var errors = new ArrayList<String>();
 
         if (email == null || email.isEmpty()) {
@@ -65,7 +68,7 @@ public class UserService {
             throw new ValidationException(errors);
         }
 
-        return user;
+        return SessionRepository.createSession(user);
     }
 
     private static boolean isValidEmail(String email) {
