@@ -12,6 +12,8 @@
     <%@include file="/common.jsp" %>
 </head>
 <body>
+<h2>Sign In</h2>
+
 <form method="post">
     <label for="email">Email:</label>
     <input type="text" id="email" name="email" required><br><br>
@@ -37,5 +39,9 @@
 
     <input type="submit" value="Sign In">
 </form>
+
+<p>
+    Don't have an account? <a href="<%=request.getContextPath()%>/account/register">Register</a>
+</p>
 </body>
 </html>

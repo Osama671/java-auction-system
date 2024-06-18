@@ -12,7 +12,7 @@
     <%@include file="/common.jsp" %>
 </head>
 <body>
-<h2>User Registration Form</h2>
+<h2>Create an Account</h2>
 <form method="post">
     <%
         var email = request.getAttribute("email") == null ? "" : request.getAttribute("email");
@@ -47,5 +47,9 @@
 
     <input type="submit" value="Register">
 </form>
+
+<p>
+    Already have an account? <a href="<%=request.getContextPath()%>/account/sign-in">Sign In</a>
+</p>
 </body>
 </html>
