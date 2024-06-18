@@ -28,7 +28,7 @@ public class UserService {
             errors.add("Name cannot be empty");
         }
 
-        if (email != null && UserRepository.findUserByEmail(email) != null) {
+        if (email != null && UserRepository.findUser(email) != null) {
             errors.add("This email is already taken. Please use a different one");
         }
 
@@ -40,7 +40,32 @@ public class UserService {
 
         UserRepository.addUser(email, name, hashedPassword);
 
-        return UserRepository.findUserByEmail(email);
+        return UserRepository.findUser(email);
+    }
+
+    public static User signIn(String email, String password) throws Exception {
+        var errors = new ArrayList<String>();
+
+        if (email == null || email.isEmpty()) {
+            errors.add("Email cannot be empty");
+        }
+
+        if (password == null) {
+            errors.add("Password cannot be empty");
+        }
+
+        if (!errors.isEmpty()) {
+            throw new ValidationException(errors);
+        }
+
+        var user = UserRepository.findUser(email);
+
+        if (user == null || !verifyPassword(password, user.getPassword())) {
+            errors.add("Invalid username/password");
+            throw new ValidationException(errors);
+        }
+
+        return user;
     }
 
     private static boolean isValidEmail(String email) {
@@ -70,5 +95,18 @@ public class UserService {
         random.nextBytes(salt);
 
         return hashPassword(password, salt);
+    }
+
+    public static boolean verifyPassword(String password, String storedPassword) throws NoSuchAlgorithmException {
+        String[] parts = storedPassword.split(":");
+        if (parts.length != 2) {
+            return false;
+        }
+
+        String saltBase64 = parts[0];
+
+        byte[] salt = Base64.getDecoder().decode(saltBase64);
+
+        return storedPassword.equals(hashPassword(password, salt));
     }
 }

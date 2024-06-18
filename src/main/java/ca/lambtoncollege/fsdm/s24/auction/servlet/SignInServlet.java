@@ -12,22 +12,21 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 
-@WebServlet(name = "registrationServlet", value = "/account/register")
-public class RegistrationServlet extends HttpServlet {
+@WebServlet(name = "signInServlet", value = "/account/sign-in")
+public class SignInServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        RequestDispatcher dispatcher = req.getRequestDispatcher("/account/register.jsp");
+        RequestDispatcher dispatcher = req.getRequestDispatcher("/account/sign-in.jsp");
         dispatcher.forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         var email = req.getParameter("email");
-        var name = req.getParameter("name");
         var password = req.getParameter("password");
 
         try {
-            UserService.createUser(email, name, password);
+            var user = UserService.signIn(email, password);
 
             RequestDispatcher dispatcher = req.getRequestDispatcher("/");
             dispatcher.forward(req, resp);
@@ -37,9 +36,8 @@ public class RegistrationServlet extends HttpServlet {
             req.setAttribute("errors", errors);
             req.setAttribute("email", email);
             req.setAttribute("password", password);
-            req.setAttribute("name", name);
 
-            RequestDispatcher dispatcher = req.getRequestDispatcher("/account/register.jsp");
+            RequestDispatcher dispatcher = req.getRequestDispatcher("/account/sign-in.jsp");
             dispatcher.forward(req, resp);
         }
     }

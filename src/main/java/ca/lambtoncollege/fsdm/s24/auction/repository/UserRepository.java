@@ -20,7 +20,7 @@ public class UserRepository {
         }
     }
 
-    public static User findUserByEmail(String email) throws SQLException {
+    public static User findUser(String email) throws SQLException {
         try (var connection = Database.getConnection()) {
             var statement = connection.prepareStatement("""
                         SELECT id, email, name, password
