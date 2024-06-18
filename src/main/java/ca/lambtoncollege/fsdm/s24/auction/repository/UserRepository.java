@@ -20,6 +20,25 @@ public class UserRepository {
         }
     }
 
+    public static User getUser(int id) throws SQLException {
+        try (var connection = Database.getConnection()) {
+            var statement = connection.prepareStatement("""
+                        SELECT id, email, name, password
+                        FROM User
+                        WHERE id = ?
+                    """);
+            statement.setInt(1, id);
+
+            var result = statement.executeQuery();
+
+            if (!result.next()) {
+                return null;
+            }
+
+            return fromResultSet(result);
+        }
+    }
+
     public static User findUser(String email) throws SQLException {
         try (var connection = Database.getConnection()) {
             var statement = connection.prepareStatement("""

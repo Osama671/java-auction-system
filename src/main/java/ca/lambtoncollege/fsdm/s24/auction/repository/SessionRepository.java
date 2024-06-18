@@ -42,7 +42,10 @@ public class SessionRepository {
                 return null;
             }
 
-            return fromResultSet(rs);
+            var session = fromResultSet(rs);
+            session.setUser(UserRepository.getUser(session.getUserId()));
+
+            return session;
         }
     }
 

@@ -8,6 +8,15 @@ public class Session {
     private int userId;
     private UUID sessionId;
     private Instant createdAt;
+    private User user;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public int getId() {
         return id;

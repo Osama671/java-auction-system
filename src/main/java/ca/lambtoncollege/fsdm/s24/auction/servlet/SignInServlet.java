@@ -1,6 +1,7 @@
 package ca.lambtoncollege.fsdm.s24.auction.servlet;
 
 import ca.lambtoncollege.fsdm.s24.auction.error.ValidationException;
+import ca.lambtoncollege.fsdm.s24.auction.service.AuthService;
 import ca.lambtoncollege.fsdm.s24.auction.service.UserService;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -16,6 +17,16 @@ import java.util.ArrayList;
 public class SignInServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        try {
+            var user = AuthService.authenticate(req);
+            if (user != null) {
+                resp.sendRedirect(req.getContextPath() + "/");
+                return;
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+
         RequestDispatcher dispatcher = req.getRequestDispatcher("/account/sign-in.jsp");
         dispatcher.forward(req, resp);
     }
@@ -27,6 +38,8 @@ public class SignInServlet extends HttpServlet {
 
         try {
             var session = UserService.signIn(email, password);
+
+            resp.addCookie(AuthService.createSessionCookie(session));
 
             resp.sendRedirect(req.getContextPath() + "/");
         } catch (Exception e) {

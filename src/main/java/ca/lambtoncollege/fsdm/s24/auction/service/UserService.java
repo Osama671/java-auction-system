@@ -12,6 +12,7 @@ import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -71,6 +72,10 @@ public class UserService {
         return SessionRepository.createSession(user);
     }
 
+    public static Session authenticate(String sessionId) throws SQLException {
+        return SessionRepository.findSession(UUID.fromString(sessionId));
+    }
+
     private static boolean isValidEmail(String email) {
         Pattern pattern = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
         Matcher matcher = pattern.matcher(email);
@@ -100,7 +105,7 @@ public class UserService {
         return hashPassword(password, salt);
     }
 
-    public static boolean verifyPassword(String password, String storedPassword) throws NoSuchAlgorithmException {
+    private static boolean verifyPassword(String password, String storedPassword) throws NoSuchAlgorithmException {
         String[] parts = storedPassword.split(":");
         if (parts.length != 2) {
             return false;
