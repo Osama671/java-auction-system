@@ -49,6 +49,18 @@ public class SessionRepository {
         }
     }
 
+    public static void deleteSession(UUID sessionId) throws SQLException {
+        try (var connection = Database.getConnection()) {
+            var statement = connection.prepareStatement("""
+                        DELETE FROM Session
+                        WHERE session_id = ?
+                    """);
+            statement.setString(1, sessionId.toString());
+
+            statement.execute();
+        }
+    }
+
     private static Session fromResultSet(ResultSet rs) throws SQLException {
         var session = new Session();
 

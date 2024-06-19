@@ -76,6 +76,10 @@ public class UserService {
         return SessionRepository.findSession(UUID.fromString(sessionId));
     }
 
+    public static void signOut(String sessionId) throws SQLException {
+        SessionRepository.deleteSession(UUID.fromString(sessionId));
+    }
+
     private static boolean isValidEmail(String email) {
         Pattern pattern = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
         Matcher matcher = pattern.matcher(email);
