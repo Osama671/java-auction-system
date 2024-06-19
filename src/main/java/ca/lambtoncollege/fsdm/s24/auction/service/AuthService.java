@@ -13,22 +13,39 @@ public class AuthService {
         Cookie userCookie = new Cookie("session", session.getSessionId().toString());
         userCookie.setMaxAge(60 * 60 * 24 * 7); // 7 days
         userCookie.setHttpOnly(true);
+        userCookie.setPath("/");
         return userCookie;
     }
 
     public static User authenticate(HttpServletRequest req) throws SQLException {
-        var sessionCookie = Arrays.stream(req.getCookies())
-                .filter(cookie -> cookie.getName().equals("session"))
-                .findFirst()
-                .orElse(null);
+        var sessionId = getSessionId(req);
+
+        if (sessionId == null) {
+            return null;
+        }
+
+        var session = UserService.authenticate(sessionId);
+
+        return session.getUser();
+    }
+
+    public static void signOut(HttpServletRequest req) throws SQLException {
+        var sessionId = getSessionId(req);
+
+        if (sessionId == null) {
+            return;
+        }
+
+        UserService.signOut(sessionId);
+    }
+
+    private static String getSessionId(HttpServletRequest req) {
+        var sessionCookie = Arrays.stream(req.getCookies()).filter(cookie -> cookie.getName().equals("session")).findFirst().orElse(null);
 
         if (sessionCookie == null) {
             return null;
         }
 
-        var sessionId = sessionCookie.getValue();
-        var session = UserService.authenticate(sessionId);
-
-        return session.getUser();
+        return sessionCookie.getValue();
     }
 }

@@ -6,9 +6,9 @@
     <%@include file="common.jsp" %>
 </head>
 <body>
+<%@include file="components/navbar.jsp" %>
 <h1><%= "Hello World!" %>
 </h1>
 <br/>
-<a href="hello-servlet">Hello Servlet</a>
 </body>
 </html>
