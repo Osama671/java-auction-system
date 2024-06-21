@@ -49,14 +49,14 @@ public class Database {
             createTableIfNotExist(connection, "Auction", """
                     CREATE TABLE Auction (
                           id INT AUTO_INCREMENT PRIMARY KEY,
-                          name VARCHAR(500) NOT NULL,
+                          title VARCHAR(500) NOT NULL,
                           description VARCHAR(3000),
                           min_bid DECIMAL(10, 2) NOT NULL,
                           ends_at DATETIME NOT NULL,
                           image BLOB,
                           state VARCHAR(100) NOT NULL,
                           created_by INT,
-                          INDEX (name),
+                          INDEX (title),
                           INDEX (state),
                           FOREIGN KEY (created_by) REFERENCES User(id)
                       );""");
