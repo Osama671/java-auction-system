@@ -11,7 +11,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 @WebServlet(name = "signInServlet", value = "/account/sign-in")
 public class SignInServlet extends HttpServlet {
@@ -43,7 +42,7 @@ public class SignInServlet extends HttpServlet {
 
             resp.sendRedirect(req.getContextPath() + "/");
         } catch (Exception e) {
-            var errors = e instanceof ValidationException ? ((ValidationException) e).errors : new ArrayList<String>().add(e.getMessage());
+            var errors = e instanceof ValidationException ? ((ValidationException) e).errors : new String[]{e.getMessage()};
 
             req.setAttribute("errors", errors);
             req.setAttribute("email", email);
