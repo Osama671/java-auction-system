@@ -10,6 +10,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.sql.SQLException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.UUID;
@@ -42,9 +43,14 @@ public class UserService {
 
         var hashedPassword = hashPassword(password);
 
-        UserRepository.addUser(email, name, hashedPassword);
+        var user = new User();
+        user.setName(name);
+        user.setPassword(hashedPassword);
+        user.setEmail(email);
 
-        return UserRepository.findUser(email);
+        UserRepository.addUser(user);
+
+        return user;
     }
 
     public static Session signIn(String email, String password) throws SQLException, ValidationException, NoSuchAlgorithmException {
@@ -69,7 +75,14 @@ public class UserService {
             throw new ValidationException(errors);
         }
 
-        return SessionRepository.createSession(user);
+        var session = new Session();
+        session.setSessionId(UUID.randomUUID());
+        session.setUser(user);
+        session.setCreatedAt(Instant.now());
+
+        SessionRepository.addSession(session);
+
+        return session;
     }
 
     public static Session authenticate(String sessionId) throws SQLException {

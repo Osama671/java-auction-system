@@ -2,29 +2,27 @@ package ca.lambtoncollege.fsdm.s24.auction.repository;
 
 import ca.lambtoncollege.fsdm.s24.auction.db.Database;
 import ca.lambtoncollege.fsdm.s24.auction.model.Session;
-import ca.lambtoncollege.fsdm.s24.auction.model.User;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.UUID;
 
 public class SessionRepository {
-    public static Session createSession(User user) throws SQLException {
-        UUID uuid = UUID.randomUUID();
-
+    public static void addSession(Session session) throws SQLException {
         try (var connection = Database.getConnection()) {
             var statement = connection.prepareStatement("""
                         INSERT INTO Session (user_id, session_id, created_at) VALUES (?, ?, ?)
-                    """);
-            statement.setInt(1, user.getId());
-            statement.setString(2, uuid.toString());
-            statement.setTimestamp(3, Timestamp.from(Instant.now()));
+                    """, Statement.RETURN_GENERATED_KEYS);
+            statement.setInt(1, session.getUser().getId());
+            statement.setString(2, session.getSessionId().toString());
+            statement.setTimestamp(3, Timestamp.from(session.getCreatedAt()));
 
-            statement.execute();
-
-            return findSession(uuid);
+            statement.executeUpdate();
+            var keys = statement.getGeneratedKeys();
+            keys.next();
+            session.setId(keys.getInt(1));
         }
     }
 
@@ -43,7 +41,7 @@ public class SessionRepository {
             }
 
             var session = fromResultSet(rs);
-            session.setUser(UserRepository.getUser(session.getUserId()));
+            session.setUser(UserRepository.getUser(session.getUser().getId()));
 
             return session;
         }
@@ -65,7 +63,7 @@ public class SessionRepository {
         var session = new Session();
 
         session.setId(rs.getInt("id"));
-        session.setUserId(rs.getInt("user_id"));
+        session.setUser(UserRepository.getUser(rs.getInt("user_id")));
         session.setSessionId(UUID.fromString(rs.getString("session_id")));
         session.setCreatedAt(rs.getTimestamp("created_at").toInstant());
 

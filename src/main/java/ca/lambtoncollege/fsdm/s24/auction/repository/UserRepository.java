@@ -5,18 +5,23 @@ import ca.lambtoncollege.fsdm.s24.auction.model.User;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class UserRepository {
-    public static void addUser(String email, String name, String password) throws SQLException {
+    public static void addUser(User user) throws SQLException {
         try (var connection = Database.getConnection()) {
             var statement = connection.prepareStatement("""
                         INSERT INTO User (email, name, password) VALUES (?, ?, ?)
-                    """);
-            statement.setString(1, email);
-            statement.setString(2, name);
-            statement.setString(3, password);
+                    """, Statement.RETURN_GENERATED_KEYS);
+            statement.setString(1, user.getEmail());
+            statement.setString(2, user.getName());
+            statement.setString(3, user.getPassword());
 
-            statement.execute();
+            statement.executeUpdate();
+            var keys = statement.getGeneratedKeys();
+            keys.next();
+
+            user.setId(keys.getInt(1));
         }
     }
 

@@ -5,7 +5,6 @@ import java.util.UUID;
 
 public class Session {
     private int id;
-    private int userId;
     private UUID sessionId;
     private Instant createdAt;
     private User user;
@@ -24,14 +23,6 @@ public class Session {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
     }
 
     public UUID getSessionId() {
