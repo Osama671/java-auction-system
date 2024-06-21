@@ -7,6 +7,7 @@
 </head>
 <body>
 <%@include file="components/navbar.jsp" %>
+<a class="btn btn-outline-dark" href="<%=request.getContextPath()%>/auction/create">Create Auction</a>
 <h1><%= "Hello World!" %>
 </h1>
 <br/>
