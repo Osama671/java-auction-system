@@ -63,6 +63,25 @@ public class UserRepository {
         }
     }
 
+    public static User getUserById(int id) throws SQLException {
+        try (var connection = Database.getConnection()) {
+            var statement = connection.prepareStatement("""
+                        SELECT id, email, name, password
+                        FROM User
+                        WHERE id = ?
+                    """);
+            statement.setInt(1, id);
+
+            var result = statement.executeQuery();
+
+            if (!result.next()) {
+                return null;
+            }
+
+            return fromResultSet(result);
+        }
+    }
+
     private static User fromResultSet(ResultSet result) throws SQLException {
         var user = new User();
         user.setId(result.getInt("id"));

@@ -41,7 +41,7 @@ public class CreateAuctionServlet extends HttpServlet {
 
             var auction = AuctionService.createAuction(title, description, minBid, endDate, user);
 
-            resp.sendRedirect(req.getContextPath() + "/auction/" + auction.getId());
+            resp.sendRedirect(req.getContextPath() + "/auction/details?id=" + auction.getId());
         } catch (Exception e) {
             var errors = e instanceof ValidationException ? ((ValidationException) e).errors : new String[]{e.getMessage()};
 

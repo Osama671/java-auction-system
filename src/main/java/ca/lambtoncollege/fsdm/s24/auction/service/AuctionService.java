@@ -86,4 +86,14 @@ public class AuctionService {
 
         return auction;
     }
+
+    public static Auction getAuction(int id) throws Exception {
+        var auction = AuctionRepository.getAuctionById(id);
+
+        if (auction == null) {
+            throw new Exception("Auction with id " + id + " does not exist");
+        }
+
+        return auction;
+    }
 }
