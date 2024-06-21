@@ -51,7 +51,7 @@ public class Database {
                           id INT AUTO_INCREMENT PRIMARY KEY,
                           title VARCHAR(500) NOT NULL,
                           description VARCHAR(3000),
-                          min_bid DECIMAL(10, 2) NOT NULL,
+                          min_bid INT NOT NULL,
                           ends_at DATETIME NOT NULL,
                           image BLOB,
                           state VARCHAR(100) NOT NULL,
@@ -66,7 +66,7 @@ public class Database {
                           id INT AUTO_INCREMENT PRIMARY KEY,
                           auction_id INT,
                           created_by INT,
-                          amount DECIMAL(10, 2) NOT NULL,
+                          amount INT NOT NULL,
                           INDEX (auction_id, amount),
                           FOREIGN KEY (auction_id) REFERENCES Auction(id),
                           FOREIGN KEY (created_by) REFERENCES User(id)
