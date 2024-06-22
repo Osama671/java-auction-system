@@ -18,14 +18,20 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class UserService {
-    public static User createUser(String email, String name, String password) throws Exception {
+    public static User createUser(String email, String name, String password, String confirmPassword) throws Exception {
         var errors = new ArrayList<String>();
 
         if (email == null || !isValidEmail(email)) {
             errors.add("Invalid email address");
         }
 
-        if (password == null || password.length() < 8) {
+        if (password == null || password.isEmpty()) {
+            errors.add("Password is required");
+        } else if (!password.equals(confirmPassword)) {
+            errors.add("Password and password confirmation should match");
+        }
+
+        if (password != null && password.length() < 8) {
             errors.add("Password should be min 8 characters");
         }
 
@@ -99,7 +105,7 @@ public class UserService {
         return matcher.matches();
     }
 
-    private static String hashPassword(String password, byte[] salt) throws NoSuchAlgorithmException {
+    private static String hashPassword(String password, byte[] salt) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-512");
             md.update(salt);

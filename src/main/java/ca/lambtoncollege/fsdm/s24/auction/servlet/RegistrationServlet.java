@@ -35,9 +35,10 @@ public class RegistrationServlet extends HttpServlet {
         var email = req.getParameter("email");
         var name = req.getParameter("name");
         var password = req.getParameter("password");
+        var confirmPassword = req.getParameter("confirmPassword");
 
         try {
-            UserService.createUser(email, name, password);
+            UserService.createUser(email, name, password, confirmPassword);
 
             resp.sendRedirect(req.getContextPath() + "/");
         } catch (Exception e) {

@@ -26,6 +26,9 @@
     <label for="password">Password:</label>
     <input type="password" id="password" name="password" required value=<%=password%>><br><br>
 
+    <label for="confirmPassword">Confirm Password:</label>
+    <input type="password" id="confirmPassword" name="confirmPassword" required><br><br>
+
     <label for="name">Name:</label>
     <input type="text" id="name" name="name" required value=<%=name%>><br><br>
 
