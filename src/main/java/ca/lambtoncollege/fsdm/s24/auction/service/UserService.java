@@ -120,7 +120,7 @@ public class UserService {
         }
     }
 
-    private static String hashPassword(String password) throws NoSuchAlgorithmException {
+    private static String hashPassword(String password) {
         SecureRandom random = new SecureRandom();
         byte[] salt = new byte[16];
         random.nextBytes(salt);
@@ -128,7 +128,7 @@ public class UserService {
         return hashPassword(password, salt);
     }
 
-    private static boolean verifyPassword(String password, String storedPassword) throws NoSuchAlgorithmException {
+    private static boolean verifyPassword(String password, String storedPassword) {
         String[] parts = storedPassword.split(":");
         if (parts.length != 2) {
             return false;
