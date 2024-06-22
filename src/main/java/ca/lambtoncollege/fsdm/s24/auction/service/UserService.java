@@ -52,7 +52,7 @@ public class UserService {
         var user = new User();
         user.setName(name);
         user.setPassword(hashedPassword);
-        user.setEmail(email);
+        user.setEmail(email.toLowerCase());
 
         UserRepository.addUser(user);
 
@@ -74,7 +74,7 @@ public class UserService {
             throw new ValidationException(errors);
         }
 
-        var user = UserRepository.findUser(email);
+        var user = UserRepository.findUser(email.toLowerCase());
 
         if (user == null || !verifyPassword(password, user.getPassword())) {
             errors.add("Invalid username/password");
