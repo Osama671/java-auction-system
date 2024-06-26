@@ -4,7 +4,10 @@ import ca.lambtoncollege.fsdm.s24.auction.error.ValidationException;
 import ca.lambtoncollege.fsdm.s24.auction.model.Auction;
 import ca.lambtoncollege.fsdm.s24.auction.model.User;
 import ca.lambtoncollege.fsdm.s24.auction.repository.AuctionRepository;
+import jakarta.servlet.http.Part;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -12,12 +15,14 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Base64;
 
 public class AuctionService {
-    public static Auction createAuction(String title, String description, String minBid, String endDate, User user) throws ValidationException, SQLException {
+    public static Auction createAuction(String title, String description, String minBid, String endDate, Part imagePart, User user) throws ValidationException, SQLException, IOException {
         var errors = new ArrayList<String>();
         Instant endDateInstant = Instant.now();
         long minBidAmount = 0;
+        long maxFileSize = 1024 * 1024; // 1MB
 
         if (title == null || title.isEmpty()) {
             errors.add("Title is required");
@@ -81,6 +86,20 @@ public class AuctionService {
         auction.setEndsAt(endDateInstant);
         auction.setState(Auction.State.Open);
         auction.setCreatedBy(user);
+
+        if (imagePart != null && imagePart.getSize() > 0) {
+            if (imagePart.getSize() > maxFileSize) {
+                errors.add("Image file size should be less than 1MB");
+            }
+            if (errors.isEmpty()) {
+                InputStream imageStream = imagePart.getInputStream();
+                String base64Image = Base64.getEncoder().encodeToString(imageStream.readAllBytes());
+                auction.setImage(base64Image);
+            }
+        }
+        if (!errors.isEmpty()) {
+            throw new ValidationException(errors);
+        }
 
         AuctionRepository.addAuction(auction);
 

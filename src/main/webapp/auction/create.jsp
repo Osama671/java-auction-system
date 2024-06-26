@@ -13,12 +13,13 @@
 </head>
 <body>
 <div class="container-fluid form-container p-4">
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
         <%
             var title = request.getAttribute("title") == null ? "" : request.getAttribute("title");
             var description = request.getAttribute("description") == null ? "" : request.getAttribute("description");
             var minBid = request.getAttribute("minBid") == null ? "" : request.getAttribute("minBid");
             var endDate = request.getAttribute("endDate") == null ? "" : request.getAttribute("endDate");
+            var auctionImage = request.getAttribute("auctionImage") == null ? "" : request.getAttribute("auctionImage");
         %>
 
         <div class="mb-3">
@@ -40,6 +41,11 @@
             <label for="endDate" class="form-label">End Date</label>
             <input class="form-control" id="endDate" name="endDate" aria-describedby="emailHelp"
                    placeholder="YYYY/MM/DD hh:mm:ss" value="<%=endDate%>">
+        </div>
+
+        <div class="mb-3">
+            <label for="auctionImage" class="form-label">Upload Image</label>
+            <input class="form-control" type="file" id="auctionImage" name="auctionImage" value="<%=auctionImage%>">
         </div>
 
         <%

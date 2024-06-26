@@ -4,13 +4,24 @@ import ca.lambtoncollege.fsdm.s24.auction.error.ValidationException;
 import ca.lambtoncollege.fsdm.s24.auction.service.AuctionService;
 import ca.lambtoncollege.fsdm.s24.auction.service.AuthService;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
 
 import java.io.IOException;
+import java.io.InputStream;
 
+
+@MultipartConfig(
+        /*
+        fileSizeThreshold = 1024 * 1024, // 1MB
+        maxFileSize = 1024 * 1024,       // 1MB
+        maxRequestSize = 1024 * 1024     // 1MB
+        */
+)
 @WebServlet(name = "createAuctionServlet", value = "/auction/create")
 public class CreateAuctionServlet extends HttpServlet {
     @Override
@@ -35,11 +46,11 @@ public class CreateAuctionServlet extends HttpServlet {
         var description = req.getParameter("description");
         var minBid = req.getParameter("minBid");
         var endDate = req.getParameter("endDate");
-
+        Part imagePart = req.getPart("auctionImage");
         try {
             var user = AuthService.authenticate(req);
 
-            var auction = AuctionService.createAuction(title, description, minBid, endDate, user);
+            var auction = AuctionService.createAuction(title, description, minBid, endDate, imagePart, user);
 
             resp.sendRedirect(req.getContextPath() + "/auction/details?id=" + auction.getId());
         } catch (Exception e) {
