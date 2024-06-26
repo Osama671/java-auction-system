@@ -10,6 +10,7 @@ public class Auction {
     private Instant endsAt;
     private State state;
     private User createdBy;
+    private String auctionImage;
 
     public User getCreatedBy() {
         return createdBy;
@@ -65,6 +66,14 @@ public class Auction {
 
     public void setMinBid(long minBid) {
         this.minBid = minBid;
+    }
+
+    public void setImage(String image) {
+        this.auctionImage = image;
+    }
+
+    public String getImage() {
+        return this.auctionImage;
     }
 
     public enum State {
