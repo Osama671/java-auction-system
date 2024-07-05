@@ -115,4 +115,18 @@ public class AuctionService {
 
         return auction;
     }
+
+    public static ArrayList<Auction> getAuctions() throws Exception {
+        return AuctionRepository.getAuctions();
+    }
+
+    public static ArrayList<Auction> searchAuctions(String query) throws Exception {
+
+        if (query == null || query.isEmpty()) {
+            var errors = new ArrayList<String>();
+            errors.add("Auction search query is required");
+            throw new ValidationException(errors);
+        }
+        return AuctionRepository.searchAuctions(query);
+    }
 }
