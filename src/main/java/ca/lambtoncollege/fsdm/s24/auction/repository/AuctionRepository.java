@@ -17,7 +17,7 @@ public class AuctionRepository {
     public static void addAuction(Auction auction) throws SQLException {
         try (var connection = Database.getConnection()) {
             var statement = connection.prepareStatement("""
-                        INSERT INTO Auction (title, description, min_bid, ends_at, image, state, created_by) 
+                        INSERT INTO Auction (title, description, min_bid, ends_at, image, state, created_by)
                         VALUES (?, ?, ?, ?, ?, ?, ?)
                     """, Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, auction.getTitle());
@@ -63,7 +63,7 @@ public class AuctionRepository {
 
             var rs = statement.executeQuery();
             var auctions = new ArrayList<Auction>();
-            while(rs.next()) {
+            while (rs.next()) {
                 auctions.add(fromResultSet(rs));
             }
 
@@ -79,10 +79,9 @@ public class AuctionRepository {
             statement.setString(1, "%" + query.toLowerCase() + "%");
             var rs = statement.executeQuery();
             var auctions = new ArrayList<Auction>();
-            while(rs.next()) {
+            while (rs.next()) {
                 auctions.add(fromResultSet(rs));
             }
-            System.out.println(auctions);
             return auctions;
         }
     }
