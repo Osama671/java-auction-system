@@ -22,7 +22,7 @@
     <div class="row">
         <% for (Auction auction : auctions) {%>
         <div class="col-md-12">
-            <%= auction.getTitle() %>
+            <a href="<%=request.getContextPath() + "/auction/details?id=" + auction.getId()%>"><%= auction.getTitle() %></a>
         </div>
         <% } %>
     </div>
