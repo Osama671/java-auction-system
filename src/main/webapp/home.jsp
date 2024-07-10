@@ -19,16 +19,24 @@
 <br/>
 <div class="container">
     <% if (auctions.isEmpty()) {%>
-       <h3>No Auctions found</h3>
+    <h3>No Auctions found</h3>
     <%}%>
     <div class="row">
         <% for (Auction auction : auctions) {%>
         <div class="col-md-12">
-            <a href="<%=request.getContextPath() + "/auction/details?id=" + auction.getId()%>"><%= auction.getTitle() %></a>
-            <p > <%= auction.getEndsAt() %></p>
-            <% if(auction.getState() == Auction.State.Open) {%><p class="countdown" data-end-time="<%= auction.getEndsAt() %>" auction-state="<%= auction.getState()%>">  </p><%} else{
+            <a href="<%=request.getContextPath() + "/auction/details?id=" + auction.getId()%>"><%= auction.getTitle() %>
+            </a>
+            <p><%= auction.getEndsAt() %>
+            </p>
+            <% if (auction.getState() == Auction.State.Open) {%>
+            <p class="countdown"
+               data-end-time="<%= auction.getEndsAt() %>"
+               auction-state="<%= auction.getState()%>">
+            </p><%
+        } else {
         %>
-            <p ><%= AuctionHelper.getAuctionStateText(auction.getState()) %></p> <%}%>     </div>
+            <p><%= AuctionHelper.getAuctionStateText(auction.getState()) %>
+            </p> <%}%></div>
         <% } %>
     </div>
 </div>

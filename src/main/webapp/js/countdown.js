@@ -1,22 +1,22 @@
 document.addEventListener('DOMContentLoaded', (event) => {
     let auctions = [];
-    document.querySelectorAll('.countdown').forEach(function(element) {
+    document.querySelectorAll('.countdown').forEach(function (element) {
         let endTime = element.getAttribute('data-end-time');
         let auctionState = element.getAttribute('auction-state')
         auctions.push({
-            element: element,
-            endTime: new Date(endTime),
-            state: auctionState
+            element: element, endTime: new Date(endTime), state: auctionState
         });
-    console.log(auctionState)
     });
 
-    function updateCountdown(auction) {
+    function updateCountdown(auction, id) {
         const now = new Date().getTime();
         const distance = auction.endTime - now;
 
         if (distance < 0) {
             auction.element.innerHTML = "Auction Ended";
+            if (id) {
+                clearInterval(id)
+            }
             return;
         }
         auction.state
@@ -31,10 +31,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }
 
     function initializeCountdowns() {
-        auctions.forEach(function(auction) {
+        auctions.forEach(function (auction) {
             updateCountdown(auction);
-            setInterval(() => updateCountdown(auction), 1000);
+            let id = setInterval(() => updateCountdown(auction, id), 1000);
         });
     }
+
     initializeCountdowns();
 });

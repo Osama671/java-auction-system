@@ -22,13 +22,14 @@
     int userId = (int) request.getAttribute("userId");
 %>
 
-Auction id: <%=auction.getId()%><br />
-Title: <%=auction.getTitle()%><br />
-Min Bid: <%=auction.getMinBid() / 100F%><br />
-Current Max Bix: <%= highestBid == null ? "No bids" : highestBid.getAmount() / 100F%><br />
-Status: <%=auction.getState()%><br />
-Closes At: <%=auction.getEndsAt()%><br />
-<% if(auction.getState() == Auction.State.Open) {%><p class="countdown" data-end-time="<%= auction.getEndsAt() %>" auction-state="<%= auction.getState()%>">  </p><%}%>
+Auction id: <%=auction.getId()%><br/>
+Title: <%=auction.getTitle()%><br/>
+Min Bid: <%=auction.getMinBid() / 100F%><br/>
+Current Max Bix: <%= highestBid == null ? "No bids" : highestBid.getAmount() / 100F%><br/>
+Status: <%=auction.getState()%><br/>
+Closes At: <%=auction.getEndsAt()%><br/>
+<% if (auction.getState() == Auction.State.Open) {%><p class="countdown" data-end-time="<%= auction.getEndsAt() %>"
+                                                       auction-state="<%= auction.getState()%>"></p><%}%>
 
 <% if (auction.getCreatedBy().getId() == userId) {%>
 <h3>You can't bid on your listing</h3>
@@ -52,13 +53,14 @@ Closes At: <%=auction.getEndsAt()%><br />
     <% } %>
     <input type="submit" value="Submit Bid">
 </form>
-    <%
-        } else {
-    %>
-    <h3><%= AuctionHelper.getAuctionStateText(auction.getState())%></h3>
-    <%
-        }
-    %>
+<%
+} else {
+%>
+<h3><%= AuctionHelper.getAuctionStateText(auction.getState())%>
+</h3>
+<%
+    }
+%>
 
 </body>
 </html>
