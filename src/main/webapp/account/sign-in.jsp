@@ -10,38 +10,51 @@
 <head>
     <title>Sign In</title>
     <%@include file="/common.jsp" %>
-</head>
-<body>
-<h2>Sign In</h2>
-
-<form method="post">
-    <label for="email">Email:</label>
-    <input type="text" id="email" name="email" required><br><br>
-
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="password" required><br><br>
-
-    <%
-        var errors = (String[]) request.getAttribute("errors");
-        if (errors != null && errors.length > 0) {
-    %>
-    <div class="text-danger">
-        <ul>
-            <% for (String error : errors) { %>
-            <li><%= error %>
-            </li>
-            <% } %>
-        </ul>
-    </div>
-    <%
+    <style>
+        .card {
+            max-width: 572px;
         }
-    %>
+    </style>
+</head>
+<body class="container h-100 d-flex flex-column justify-content-center align-items-center">
+<div class="card w-100 p-5 border-0 shadow-lg">
+    <h1 class="mb-5 display-6">Sign In</h1>
 
-    <input type="submit" value="Sign In">
-</form>
+    <form class="d-flex flex-column align-items-center" method="post">
+        <div class="container mb-4">
+            <div class="row mb-2">
+                <label class="col-3 m-auto" for="email">Email:</label>
+                <input class="col-9" type="text" id="email" name="email" required><br><br>
+            </div>
 
-<p>
-    Don't have an account? <a href="<%=request.getContextPath()%>/account/register">Register</a>
-</p>
+            <div class="row">
+                <label class="col-3 m-auto" for="password">Password:</label>
+                <input class="col-9" type="password" id="password" name="password" required><br><br>
+            </div>
+        </div>
+
+        <%
+            var errors = (String[]) request.getAttribute("errors");
+            if (errors != null && errors.length > 0) {
+        %>
+        <div class="text-danger align-self-start">
+            <ul>
+                <% for (String error : errors) { %>
+                <li><%= error %>
+                </li>
+                <% } %>
+            </ul>
+        </div>
+        <%
+            }
+        %>
+
+        <input class="btn btn-dark mt-3 fs-5" type="submit" value="Sign In">
+    </form>
+
+    <p class="m-0 mt-4">
+        Don't have an account? <a href="<%=request.getContextPath()%>/account/register">Register</a>
+    </p>
+</div>
 </body>
 </html>
