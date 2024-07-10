@@ -1,12 +1,14 @@
 document.addEventListener('DOMContentLoaded', (event) => {
     let auctions = [];
     document.querySelectorAll('.countdown').forEach(function(element) {
-        var endTime = element.getAttribute('data-end-time');
+        let endTime = element.getAttribute('data-end-time');
+        let auctionState = element.getAttribute('auction-state')
         auctions.push({
             element: element,
-            endTime: new Date(endTime)
+            endTime: new Date(endTime),
+            state: auctionState
         });
-
+    console.log(auctionState)
     });
 
     function updateCountdown(auction) {
@@ -17,6 +19,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
             auction.element.innerHTML = "Auction Ended";
             return;
         }
+        auction.state
+
 
         const days = Math.floor(distance / (1000 * 60 * 60 * 24));
         const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));

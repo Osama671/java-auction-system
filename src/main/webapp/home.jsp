@@ -1,12 +1,12 @@
 <%@ page import="ca.lambtoncollege.fsdm.s24.auction.model.Auction" %>
 <%@ page import="java.util.ArrayList" %>
+<%@ page import="ca.lambtoncollege.fsdm.s24.auction.helper.AuctionHelper" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
 <head>
     <title>JSP - Hello World</title>
     <%@include file="common.jsp" %>
-    <%@include file="js/ayaya.jsp" %>
     <script type="text/javascript" src="<%= request.getContextPath() %>/js/countdown.js" defer></script>
 </head>
 <body>
@@ -26,11 +26,13 @@
         <div class="col-md-12">
             <a href="<%=request.getContextPath() + "/auction/details?id=" + auction.getId()%>"><%= auction.getTitle() %></a>
             <p > <%= auction.getEndsAt() %></p>
-            <p class="countdown" data-end-time="<%= auction.getEndsAt() %>">  </p>
-        </div>
+            <% if(auction.getState() == Auction.State.Open) {%><p class="countdown" data-end-time="<%= auction.getEndsAt() %>" auction-state="<%= auction.getState()%>">  </p><%} else{
+        %>
+            <p ><%= AuctionHelper.getAuctionStateText(auction.getState()) %></p> <%}%>     </div>
         <% } %>
     </div>
 </div>
 
 </body>
 </html>
+
