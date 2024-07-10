@@ -6,6 +6,8 @@
 <head>
     <title>JSP - Hello World</title>
     <%@include file="common.jsp" %>
+    <%@include file="js/ayaya.jsp" %>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/countdown.js" defer></script>
 </head>
 <body>
 <%@include file="components/navbar.jsp" %>
@@ -23,9 +25,12 @@
         <% for (Auction auction : auctions) {%>
         <div class="col-md-12">
             <a href="<%=request.getContextPath() + "/auction/details?id=" + auction.getId()%>"><%= auction.getTitle() %></a>
+            <p > <%= auction.getEndsAt() %></p>
+            <p class="countdown" data-end-time="<%= auction.getEndsAt() %>">  </p>
         </div>
         <% } %>
     </div>
 </div>
+
 </body>
 </html>
