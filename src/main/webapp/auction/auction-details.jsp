@@ -13,10 +13,25 @@
 </head>
 <body>
 <%
+    // Get the auction object from request attribute
     Auction auction = (Auction) request.getAttribute("auction");
-%>
-Auction Details go here
 
+    // Ensure auction object is not null
+    if (auction != null) {
+%>
+<div class="container">
+    <h2>Auction Details</h2>
+    <div>
+        <h3>Title: <%= auction.getTitle() %></h3>
+        <h5>Description: <%= auction.getDescription() %></h5>
+
+    </div>
+</div>
+<% } else { %>
+<div class="container">
+    <p>Auction details not found.</p>
+</div>
+<% } %>
 Auction id: <%=auction.getId()%>
 </body>
 </html>

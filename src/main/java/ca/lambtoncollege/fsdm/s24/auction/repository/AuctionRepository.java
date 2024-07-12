@@ -19,7 +19,7 @@ public class AuctionRepository {
                         INSERT INTO Auction (title, description, min_bid, ends_at, image, state, created_by) 
                         VALUES (?, ?, ?, ?, ?, ?, ?)
                     """, Statement.RETURN_GENERATED_KEYS);
-            statement.setString(1, auction.getDescription());
+            statement.setString(1, auction.getTitle());
             statement.setString(2, auction.getDescription());
             statement.setLong(3, auction.getMinBid());
             statement.setTimestamp(4, Timestamp.from(auction.getEndsAt()));
