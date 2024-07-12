@@ -11,6 +11,8 @@ public class Auction {
     private State state;
     private User createdBy;
     private String auctionImage;
+    private byte[] image;
+    private String imageBase64;
 
     public User getCreatedBy() {
         return createdBy;
@@ -74,6 +76,22 @@ public class Auction {
 
     public String getImage() {
         return this.auctionImage;
+    }
+
+    public byte[] getAuctionImage() {
+        return image;
+    }
+
+    public void setAuctionImage(byte[] image) {
+        this.image = image;
+    }
+
+    public String getImageBase64() {
+        return imageBase64;
+    }
+
+    public void setImageBase64(String imageBase64) {
+        this.imageBase64 = imageBase64;
     }
 
     public enum State {

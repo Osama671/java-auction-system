@@ -15,8 +15,14 @@
 <%
     Auction auction = (Auction) request.getAttribute("auction");
 %>
-Auction Details go here
+<h1>Auction Details</h1>
 
-Auction id: <%=auction.getId()%>
+<p>Auction id: <%=auction.getId()%></p>
+<p>Auction title: <%=auction.getTitle()%></p>
+<p>Auction description: <%=auction.getDescription()%></p>
+
+<% if (auction.getImageBase64() != null) { %>
+<img src="data:image/jpeg;base64,<%=auction.getImageBase64()%>" alt="Auction Image" height="500px" width="500px"/>
+<% } %>
 </body>
 </html>

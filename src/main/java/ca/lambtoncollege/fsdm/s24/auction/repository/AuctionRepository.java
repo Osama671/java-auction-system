@@ -41,7 +41,7 @@ public class AuctionRepository {
         }
     }
 
-    public static Auction getAuctionById(int id) throws SQLException {
+    /*public static Auction getAuctionById(int id) throws SQLException {
         try (var connection = Database.getConnection()) {
             var statement = connection.prepareStatement("""
                         SELECT * FROM Auction WHERE id = ?
@@ -55,6 +55,27 @@ public class AuctionRepository {
             }
 
             return fromResultSet(rs);
+        }
+    }*/
+
+    public Auction getAuctionById(int id) throws SQLException {
+        String query = "SELECT id, title, description, image FROM auction.Auction WHERE id = ?";
+        try (var connection = Database.getConnection();
+             var statement = connection.prepareStatement(query)) {
+            statement.setInt(1, id);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    Auction auction = new Auction();
+                    auction.setId(resultSet.getInt("id"));
+                    auction.setTitle(resultSet.getString("title"));
+                    auction.setDescription(resultSet.getString("description"));
+                    auction.setAuctionImage(resultSet.getBytes("image"));
+                    return auction;
+                } else {
+                    return null;
+                }
+            }
         }
     }
 
