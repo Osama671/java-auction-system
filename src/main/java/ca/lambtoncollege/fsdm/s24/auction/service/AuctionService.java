@@ -175,7 +175,6 @@ public class AuctionService {
 
     public static void closeAuction(int auction_id, int user_id) throws Exception {
         var auction = AuctionService.getAuction(auction_id);
-        System.out.println("CLOSE Service");
         if(auction.getCreatedBy().getId() == user_id) {
             AuctionRepository.closeAuction(auction_id);
         } else {
