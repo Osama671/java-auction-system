@@ -11,23 +11,33 @@
 <body>
 <%@include file="../components/navbar.jsp" %>
 <%
+    // Get the auction object from request attribute
     Auction auction = (Auction) request.getAttribute("auction");
     Bid highestBid = (Bid) request.getAttribute("highestBid");
     int userId = (int) request.getAttribute("userId");
 %>
 
-<h1>Auction Details</h1>
+<div class="container">
+    <h2>Auction Details</h2>
+    <div>
+        <h3>Title: <%= auction.getTitle() %></h3>
+        <h5>Description: <%= auction.getDescription() %></h5>
 
-<p>Auction ID: <%=auction.getId()%></p>
-<p>Title: <%=auction.getTitle()%></p>
-<p>Min Bid: <%=auction.getMinBid() / 100F%></p>
-<p>Current Max Bid: <%= highestBid == null ? "No bids" : highestBid.getAmount() / 100F%></p>
-<p>Status: <%=auction.getState()%></p>
-<p>Closes At: <%=auction.getEndsAt()%></p>
+    </div>
+</div>
 
-<% if (auction.getState() == Auction.State.Open) { %>
-<p class="countdown" data-end-time="<%= auction.getEndsAt() %>" auction-state="<%= auction.getState()%>"></p>
+Auction id: <%=auction.getId()%><br/>
+Title: <%=auction.getTitle()%><br/>
+Min Bid: <%=auction.getMinBid() / 100F%><br/>
+Current Max Bix: <%= highestBid == null ? "No bids" : highestBid.getAmount() / 100F%><br/>
+Status: <%=auction.getState()%><br/>
+Closes At: <%=auction.getEndsAt()%><br/>
+<% if (auction.getImageBase64() != null) { %>
+<img src="data:image/jpeg;base64,<%=auction.getImageBase64()%>" alt="Auction Image" height="500px" width="500px"/>
 <% } %>
+
+<% if (auction.getState() == Auction.State.Open) {%><p class="countdown" data-end-time="<%= auction.getEndsAt() %>"
+                                                       auction-state="<%= auction.getState()%>"></p><%}%>
 
 <% if (auction.getCreatedBy().getId() == userId) { %>
 <h3>You can't bid on your listing</h3>

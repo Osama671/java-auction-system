@@ -69,7 +69,7 @@ public class AuctionDetailsServlet extends HttpServlet {
         var bid = req.getParameter("bid");
 
         try {
-            AuctionService.addBid(Integer.parseInt(auctionId), user.getId(), Integer.parseInt(bid));
+            AuctionService.addBid(Integer.parseInt(auctionId), user.getId(), Integer.parseInt(bid) * 100);
 
             resp.sendRedirect(req.getContextPath() + "/auction/details?id=" + auctionId);
         } catch (Exception e) {

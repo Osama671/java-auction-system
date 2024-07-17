@@ -74,6 +74,14 @@ public class Database {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
+        try (var connection = Database.getConnection()) {
+            connection.createStatement().execute("ALTER TABLE Auction MODIFY min_bid BIGINT NOT NULL");
+            connection.createStatement().execute("ALTER TABLE Bid MODIFY amount BIGINT NOT NULL");
+            connection.createStatement().execute("ALTER TABLE Auction MODIFY image LONGBLOB NOT NULL");
+        } catch (Exception e) {
+            // ignore
+        }
     }
 
     private static void createTableIfNotExist(Connection connection, String tableName, String createQuery) throws SQLException {
