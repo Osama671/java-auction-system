@@ -113,6 +113,7 @@ public class AuctionService {
     }
 
     public static Auction getAuction(int id) throws Exception {
+        AuctionRepository.checkAndUpdateAuctions();
         var auction = AuctionRepository.getAuctionById(id);
 
         if (auction == null) {
@@ -158,11 +159,12 @@ public class AuctionService {
     }
 
     public static ArrayList<Auction> getAuctions() throws Exception {
+        AuctionRepository.checkAndUpdateAuctions();
         return AuctionRepository.getAuctions();
     }
 
     public static ArrayList<Auction> searchAuctions(String query) throws Exception {
-
+        AuctionRepository.checkAndUpdateAuctions();
         if (query == null || query.isEmpty()) {
             var errors = new ArrayList<String>();
             errors.add("Auction search query is required");
