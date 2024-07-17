@@ -5,10 +5,7 @@ import ca.lambtoncollege.fsdm.s24.auction.model.Auction;
 import ca.lambtoncollege.fsdm.s24.auction.model.Bid;
 
 import javax.sql.rowset.serial.SerialBlob;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Base64;
 
@@ -72,6 +69,8 @@ public class AuctionRepository {
         }
     }
 
+
+
     public static ArrayList<Auction> searchAuctions(String query) throws SQLException {
         try (var connection = Database.getConnection()) {
             var statement = connection.prepareStatement("""
@@ -98,6 +97,23 @@ public class AuctionRepository {
         }
     }
 
+
+    public static void closeAuction(int auctionId) throws SQLException {
+        try (var connection = Database.getConnection()) {
+            var statement = connection.prepareStatement("""
+                        UPDATE Auction SET state = ? WHERE id = ?
+                    """);
+            statement.setString(1, Auction.State.Closed.toString());
+            statement.setInt(2, auctionId);
+            statement.executeUpdate();
+        } catch(SQLException e) {
+            throw new SQLException(e.getMessage());
+        }
+    }
+
+
+
+
     private static Auction fromResultSet(ResultSet rs) throws SQLException {
         var auction = new Auction();
         auction.setId(rs.getInt("id"));
@@ -113,3 +129,4 @@ public class AuctionRepository {
 
 
 }
+

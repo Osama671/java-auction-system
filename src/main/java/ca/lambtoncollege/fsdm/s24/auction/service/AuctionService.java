@@ -150,4 +150,14 @@ public class AuctionService {
 
         BidRepository.addBid(auction_id, created_by, amount);
     }
+
+    public static void closeAuction(int auction_id, int user_id) throws Exception {
+        var auction = AuctionService.getAuction(auction_id);
+        System.out.println("CLOSE Service");
+        if(auction.getCreatedBy().getId() == user_id) {
+            AuctionRepository.closeAuction(auction_id);
+        } else {
+            throw new Exception("Only user who created auction can close it");
+        }
+    }
 }
