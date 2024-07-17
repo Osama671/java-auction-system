@@ -2,12 +2,14 @@ package ca.lambtoncollege.fsdm.s24.auction.repository;
 
 import ca.lambtoncollege.fsdm.s24.auction.db.Database;
 import ca.lambtoncollege.fsdm.s24.auction.model.Auction;
+import ca.lambtoncollege.fsdm.s24.auction.model.Bid;
 
 import javax.sql.rowset.serial.SerialBlob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Base64;
 
 public class AuctionRepository {
@@ -16,7 +18,7 @@ public class AuctionRepository {
     public static void addAuction(Auction auction) throws SQLException {
         try (var connection = Database.getConnection()) {
             var statement = connection.prepareStatement("""
-                        INSERT INTO Auction (title, description, min_bid, ends_at, image, state, created_by) 
+                        INSERT INTO Auction (title, description, min_bid, ends_at, image, state, created_by)
                         VALUES (?, ?, ?, ?, ?, ?, ?)
                     """, Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, auction.getTitle());
@@ -54,6 +56,48 @@ public class AuctionRepository {
         }
     }
 
+    public static ArrayList<Auction> getAuctions() throws SQLException {
+        try (var connection = Database.getConnection()) {
+            var statement = connection.prepareStatement("""
+                        SELECT * FROM Auction
+                    """);
+
+            var rs = statement.executeQuery();
+            var auctions = new ArrayList<Auction>();
+            while (rs.next()) {
+                auctions.add(fromResultSet(rs));
+            }
+
+            return auctions;
+        }
+    }
+
+    public static ArrayList<Auction> searchAuctions(String query) throws SQLException {
+        try (var connection = Database.getConnection()) {
+            var statement = connection.prepareStatement("""
+                        SELECT * FROM Auction WHERE LOWER( Auction.title ) LIKE ?
+                    """);
+            statement.setString(1, "%" + query.toLowerCase() + "%");
+            var rs = statement.executeQuery();
+            var auctions = new ArrayList<Auction>();
+            while (rs.next()) {
+                auctions.add(fromResultSet(rs));
+            }
+            return auctions;
+        }
+    }
+
+    public static void checkAndUpdateAuctions() throws SQLException {
+        try (var connection = Database.getConnection()) {
+            var statement = connection.prepareStatement("""
+                        UPDATE Auction SET state = 'ENDED' WHERE ends_at < NOW()
+                    """);
+            var rs = statement.executeUpdate();
+        } catch(SQLException e) {
+            throw new SQLException(e.getMessage());
+        }
+    }
+
     private static Auction fromResultSet(ResultSet rs) throws SQLException {
         var auction = new Auction();
         auction.setId(rs.getInt("id"));
@@ -66,4 +110,6 @@ public class AuctionRepository {
 
         return auction;
     }
+
+
 }
