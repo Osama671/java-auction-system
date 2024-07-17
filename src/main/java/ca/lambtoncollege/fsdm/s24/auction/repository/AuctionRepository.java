@@ -2,6 +2,7 @@ package ca.lambtoncollege.fsdm.s24.auction.repository;
 
 import ca.lambtoncollege.fsdm.s24.auction.db.Database;
 import ca.lambtoncollege.fsdm.s24.auction.model.Auction;
+import ca.lambtoncollege.fsdm.s24.auction.model.Bid;
 
 import javax.sql.rowset.serial.SerialBlob;
 import java.sql.ResultSet;
@@ -58,7 +59,7 @@ public class AuctionRepository {
         }
     }*/
 
-    public Auction getAuctionById(int id) throws SQLException {
+    public static Auction getAuctionById(int id) throws SQLException {
         String query = "SELECT * FROM auction.Auction WHERE id = ?";
         try (var connection = Database.getConnection();
              var statement = connection.prepareStatement(query)) {
@@ -105,6 +106,17 @@ public class AuctionRepository {
         }
     }
 
+    public static void checkAndUpdateAuctions() throws SQLException {
+        try (var connection = Database.getConnection()) {
+            var statement = connection.prepareStatement("""
+                        UPDATE Auction SET state = 'ENDED' WHERE ends_at < NOW()
+                    """);
+            var rs = statement.executeUpdate();
+        } catch(SQLException e) {
+            throw new SQLException(e.getMessage());
+        }
+    }
+
     private static Auction fromResultSet(ResultSet rs) throws SQLException {
         var auction = new Auction();
         auction.setId(rs.getInt("id"));
@@ -123,4 +135,6 @@ public class AuctionRepository {
         }
         return auction;
     }
+
+
 }

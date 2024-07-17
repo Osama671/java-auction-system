@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Base64;
 
 public class AuctionService {
-    private static AuctionRepository repository = new AuctionRepository();
     public static Auction createAuction(String title, String description, String minBid, String endDate, Part imagePart, User user, HttpServletRequest req) throws ValidationException, SQLException, IOException {
         var errors = new ArrayList<String>();
         Instant endDateInstant = Instant.now();
@@ -90,6 +89,10 @@ public class AuctionService {
             session.setAttribute("uploadedImage", uploadedImage);
         }
 
+        if (!errors.isEmpty()) {
+            throw new ValidationException(errors);
+        }
+
         var auction = new Auction();
         auction.setTitle(title);
         auction.setDescription(description);
@@ -97,12 +100,8 @@ public class AuctionService {
         auction.setEndsAt(endDateInstant);
         auction.setState(Auction.State.Open);
         auction.setCreatedBy(user);
-
         if (uploadedImage != null && !uploadedImage.isEmpty()) {
             auction.setImage(uploadedImage);
-        }
-        if (!errors.isEmpty()) {
-            throw new ValidationException(errors);
         }
 
         AuctionRepository.addAuction(auction);
@@ -112,7 +111,12 @@ public class AuctionService {
     }
 
     public static Auction getAuction(int id) throws Exception {
-        Auction auction = repository.getAuctionById(id);
+        var auction = AuctionRepository.getAuctionById(id);
+
+        if (auction == null) {
+            throw new Exception("Auction with id " + id + " does not exist");
+        }
+
         return auction;
     }
 
