@@ -17,10 +17,20 @@
 <body>
 <%@include file="../components/navbar.jsp" %>
 <%
+    // Get the auction object from request attribute
     Auction auction = (Auction) request.getAttribute("auction");
     Bid highestBid = (Bid) request.getAttribute("highestBid");
     int userId = (int) request.getAttribute("userId");
 %>
+
+<div class="container">
+    <h2>Auction Details</h2>
+    <div>
+        <h3>Title: <%= auction.getTitle() %></h3>
+        <h5>Description: <%= auction.getDescription() %></h5>
+
+    </div>
+</div>
 
 Auction id: <%=auction.getId()%><br/>
 Title: <%=auction.getTitle()%><br/>
@@ -28,6 +38,7 @@ Min Bid: <%=auction.getMinBid() / 100F%><br/>
 Current Max Bix: <%= highestBid == null ? "No bids" : highestBid.getAmount() / 100F%><br/>
 Status: <%=auction.getState()%><br/>
 Closes At: <%=auction.getEndsAt()%><br/>
+
 <% if (auction.getState() == Auction.State.Open) {%><p class="countdown" data-end-time="<%= auction.getEndsAt() %>"
                                                        auction-state="<%= auction.getState()%>"></p><%}%>
 
