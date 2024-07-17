@@ -17,7 +17,6 @@
 %>
 <h1>Auction Details</h1>
 
-<p>Auction id: <%=auction.getId()%></p>
 <p>Auction title: <%=auction.getTitle()%></p>
 <p>Auction description: <%=auction.getDescription()%></p>
 

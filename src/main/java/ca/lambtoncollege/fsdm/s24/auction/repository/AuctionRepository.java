@@ -59,18 +59,13 @@ public class AuctionRepository {
     }*/
 
     public Auction getAuctionById(int id) throws SQLException {
-        String query = "SELECT id, title, description, image FROM auction.Auction WHERE id = ?";
+        String query = "SELECT * FROM auction.Auction WHERE id = ?";
         try (var connection = Database.getConnection();
              var statement = connection.prepareStatement(query)) {
             statement.setInt(1, id);
-
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    Auction auction = new Auction();
-                    auction.setId(resultSet.getInt("id"));
-                    auction.setTitle(resultSet.getString("title"));
-                    auction.setDescription(resultSet.getString("description"));
-                    auction.setAuctionImage(resultSet.getBytes("image"));
+            try (var rs = statement.executeQuery()) {
+                if (rs.next()) {
+                    var auction = fromResultSet(rs);
                     return auction;
                 } else {
                     return null;
@@ -119,7 +114,13 @@ public class AuctionRepository {
         auction.setEndsAt(rs.getTimestamp("ends_at").toInstant());
         auction.setCreatedBy(UserRepository.getUserById(rs.getInt("created_by")));
         auction.setState(Auction.State.fromString(rs.getString("state")));
-
+        auction.setAuctionImage(rs.getBytes("image"));
+        if(rs.getBytes("image") != null) {
+            String base64Image = Base64.getEncoder().encodeToString(rs.getBytes("image"));
+            auction.setImageBase64(base64Image);
+        } else {
+            auction.setImageBase64("");
+        }
         return auction;
     }
 }

@@ -6,13 +6,10 @@ import ca.lambtoncollege.fsdm.s24.auction.service.AuthService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.Part;
+import jakarta.servlet.http.*;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.ArrayList;
 
 
 @MultipartConfig(
@@ -49,8 +46,7 @@ public class CreateAuctionServlet extends HttpServlet {
         Part imagePart = req.getPart("auctionImage");
         try {
             var user = AuthService.authenticate(req);
-
-            var auction = AuctionService.createAuction(title, description, minBid, endDate, imagePart, user);
+            var auction = AuctionService.createAuction(title, description, minBid, endDate, imagePart, user, req);
 
             resp.sendRedirect(req.getContextPath() + "/auction/details?id=" + auction.getId());
         } catch (Exception e) {
@@ -62,6 +58,12 @@ public class CreateAuctionServlet extends HttpServlet {
             req.setAttribute("description", description);
             req.setAttribute("minBid", minBid);
             req.setAttribute("endDate", endDate);
+
+            // Set uploadedImage attribute to retain in the form
+            HttpSession session = req.getSession();
+            String uploadedImage = (String) session.getAttribute("uploadedImage");
+            req.setAttribute("auctionImage", uploadedImage);
+
             req.getRequestDispatcher("/auction/create.jsp").forward(req, resp);
         }
     }

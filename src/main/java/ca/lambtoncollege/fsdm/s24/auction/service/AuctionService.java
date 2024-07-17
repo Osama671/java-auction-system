@@ -4,6 +4,8 @@ import ca.lambtoncollege.fsdm.s24.auction.error.ValidationException;
 import ca.lambtoncollege.fsdm.s24.auction.model.Auction;
 import ca.lambtoncollege.fsdm.s24.auction.model.User;
 import ca.lambtoncollege.fsdm.s24.auction.repository.AuctionRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 
 import java.io.IOException;
@@ -19,11 +21,13 @@ import java.util.Base64;
 
 public class AuctionService {
     private static AuctionRepository repository = new AuctionRepository();
-    public static Auction createAuction(String title, String description, String minBid, String endDate, Part imagePart, User user) throws ValidationException, SQLException, IOException {
+    public static Auction createAuction(String title, String description, String minBid, String endDate, Part imagePart, User user, HttpServletRequest req) throws ValidationException, SQLException, IOException {
         var errors = new ArrayList<String>();
         Instant endDateInstant = Instant.now();
         long minBidAmount = 0;
         long maxFileSize = 1024 * 1024; // 1MB
+        HttpSession session = req.getSession();
+        String uploadedImage = (String) session.getAttribute("uploadedImage");
 
         if (title == null || title.isEmpty()) {
             errors.add("Title is required");
@@ -75,10 +79,16 @@ public class AuctionService {
             errors.add("End Date cannot be later than 1 month from now");
         }
 
-        if (!errors.isEmpty()) {
-            throw new ValidationException(errors);
+        if (imagePart != null && imagePart.getSize() > 0) {
+            if (imagePart.getSize() > maxFileSize) {
+                errors.add("Image file size should be less than 1MB");
+                throw new ValidationException(errors);
+            }
+            InputStream imageStream = imagePart.getInputStream();
+            uploadedImage = Base64.getEncoder().encodeToString(imageStream.readAllBytes());
+            // Store uploaded image in session
+            session.setAttribute("uploadedImage", uploadedImage);
         }
-
 
         var auction = new Auction();
         auction.setTitle(title);
@@ -88,34 +98,21 @@ public class AuctionService {
         auction.setState(Auction.State.Open);
         auction.setCreatedBy(user);
 
-        if (imagePart != null && imagePart.getSize() > 0) {
-            if (imagePart.getSize() > maxFileSize) {
-                errors.add("Image file size should be less than 1MB");
-            }
-            if (errors.isEmpty()) {
-                InputStream imageStream = imagePart.getInputStream();
-                String base64Image = Base64.getEncoder().encodeToString(imageStream.readAllBytes());
-                auction.setImage(base64Image);
-            }
+        if (uploadedImage != null && !uploadedImage.isEmpty()) {
+            auction.setImage(uploadedImage);
         }
         if (!errors.isEmpty()) {
             throw new ValidationException(errors);
         }
 
         AuctionRepository.addAuction(auction);
+        session.removeAttribute("uploadedImage");
 
         return auction;
     }
 
     public static Auction getAuction(int id) throws Exception {
         Auction auction = repository.getAuctionById(id);
-        if (auction != null && auction.getAuctionImage() != null) {
-            String base64Image = Base64.getEncoder().encodeToString(auction.getAuctionImage());
-            auction.setImageBase64(base64Image);
-        }else{
-            throw new Exception("Auction with id " + id + " does not exist");
-        }
-
         return auction;
     }
 

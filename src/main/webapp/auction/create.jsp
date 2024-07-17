@@ -8,7 +8,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Title</title>
+    <title>Create Auction</title>
     <%@include file="/common.jsp" %>
 </head>
 <body>
@@ -45,7 +45,15 @@
 
         <div class="mb-3">
             <label for="auctionImage" class="form-label">Upload Image</label>
-            <input class="form-control" type="file" id="auctionImage" name="auctionImage" value="<%=auctionImage%>">
+            <input class="form-control" type="file" id="auctionImage" name="auctionImage">
+            <%
+                // Retrieve uploaded image from session
+                session = request.getSession();
+                String uploadedImage = (String) session.getAttribute("uploadedImage");
+                if (uploadedImage != null && !uploadedImage.isEmpty()) {
+            %>
+            <img src="data:image/jpeg;base64,<%=uploadedImage%>" class="uploaded-image-preview" />
+            <% } %>
         </div>
 
         <%
@@ -55,8 +63,7 @@
         <div class="text-danger">
             <ul>
                 <% for (String error : errors) { %>
-                <li><%= error %>
-                </li>
+                <li><%= error %></li>
                 <% } %>
             </ul>
         </div>
