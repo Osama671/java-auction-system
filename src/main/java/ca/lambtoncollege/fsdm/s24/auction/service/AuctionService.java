@@ -2,8 +2,10 @@ package ca.lambtoncollege.fsdm.s24.auction.service;
 
 import ca.lambtoncollege.fsdm.s24.auction.error.ValidationException;
 import ca.lambtoncollege.fsdm.s24.auction.model.Auction;
+import ca.lambtoncollege.fsdm.s24.auction.model.Bid;
 import ca.lambtoncollege.fsdm.s24.auction.model.User;
 import ca.lambtoncollege.fsdm.s24.auction.repository.AuctionRepository;
+import ca.lambtoncollege.fsdm.s24.auction.repository.BidRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
@@ -118,6 +120,41 @@ public class AuctionService {
         }
 
         return auction;
+    }
+    public static Bid getHighestBid(int id) throws Exception {
+        AuctionRepository.checkAndUpdateAuctions();
+        return BidRepository.getHighestBid(id);
+    }
+
+    public static void addBid(int auction_id, int created_by, int amount) throws Exception {
+        AuctionRepository.checkAndUpdateAuctions();
+        Auction auction = AuctionRepository.getAuctionById(auction_id);
+
+        var errors = new ArrayList<String>();
+        if (auction == null) {
+            errors.add("Auction with id " + auction_id + " does not exist");
+        }
+        if(auction.getState() != Auction.State.Open) {
+            errors.add("Auction is Closed");
+        }
+        Bid highestBid = BidRepository.getHighestBid(auction_id);
+        if( highestBid != null && amount <= highestBid.getAmount()) {
+            errors.add("Bid can't be less than equal to the current highest bid");
+        }
+        if(auction.getCreatedBy().getId() == created_by) {
+            errors.add("You cannot bid on your listing");
+        }
+        if(highestBid != null && highestBid.getCreatedBy().getId() == created_by) {
+            errors.add("You cannot outbid yourself");
+        }
+        if(amount < auction.getMinBid()) {
+            errors.add("You cannot bid less than the minimum bid");
+        }
+        if(!errors.isEmpty()) {
+            throw new ValidationException(errors);
+        }
+
+        BidRepository.addBid(auction_id, created_by, amount);
     }
 
     public static ArrayList<Auction> getAuctions() throws Exception {
