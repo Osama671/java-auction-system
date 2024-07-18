@@ -38,6 +38,9 @@ Min Bid: <%=auction.getMinBid() / 100F%><br/>
 Current Max Bix: <%= highestBid == null ? "No bids" : highestBid.getAmount() / 100F%><br/>
 Status: <%=auction.getState()%><br/>
 Closes At: <%=auction.getEndsAt()%><br/>
+<% if (auction.getImageBase64() != null) { %>
+<img src="data:image/jpeg;base64,<%=auction.getImageBase64()%>" alt="Auction Image" height="500px" width="500px"/>
+<% } %>
 
 <% if (auction.getState() == Auction.State.Open) {%><p class="countdown" data-end-time="<%= auction.getEndsAt() %>"
                                                        auction-state="<%= auction.getState()%>"></p><%}%>

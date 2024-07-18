@@ -6,7 +6,12 @@ import ca.lambtoncollege.fsdm.s24.auction.model.Bid;
 import ca.lambtoncollege.fsdm.s24.auction.model.User;
 import ca.lambtoncollege.fsdm.s24.auction.repository.AuctionRepository;
 import ca.lambtoncollege.fsdm.s24.auction.repository.BidRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.Part;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -14,12 +19,16 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Base64;
 
 public class AuctionService {
-    public static Auction createAuction(String title, String description, String minBid, String endDate, User user) throws ValidationException, SQLException {
+    public static Auction createAuction(String title, String description, String minBid, String endDate, Part imagePart, User user, HttpServletRequest req) throws ValidationException, SQLException, IOException {
         var errors = new ArrayList<String>();
         Instant endDateInstant = Instant.now();
         long minBidAmount = 0;
+        long maxFileSize = 1024 * 1024; // 1MB
+        HttpSession session = req.getSession();
+        String uploadedImage = (String) session.getAttribute("uploadedImage");
 
         if (title == null || title.isEmpty()) {
             errors.add("Title is required");
@@ -71,10 +80,20 @@ public class AuctionService {
             errors.add("End Date cannot be later than 1 month from now");
         }
 
+        if (imagePart != null && imagePart.getSize() > 0) {
+            if (imagePart.getSize() > maxFileSize) {
+                errors.add("Image file size should be less than 1MB");
+                throw new ValidationException(errors);
+            }
+            InputStream imageStream = imagePart.getInputStream();
+            uploadedImage = Base64.getEncoder().encodeToString(imageStream.readAllBytes());
+            // Store uploaded image in session
+            session.setAttribute("uploadedImage", uploadedImage);
+        }
+
         if (!errors.isEmpty()) {
             throw new ValidationException(errors);
         }
-
 
         var auction = new Auction();
         auction.setTitle(title);
@@ -83,8 +102,12 @@ public class AuctionService {
         auction.setEndsAt(endDateInstant);
         auction.setState(Auction.State.Open);
         auction.setCreatedBy(user);
+        if (uploadedImage != null && !uploadedImage.isEmpty()) {
+            auction.setImage(uploadedImage);
+        }
 
         AuctionRepository.addAuction(auction);
+        session.removeAttribute("uploadedImage");
 
         return auction;
     }
@@ -99,22 +122,6 @@ public class AuctionService {
 
         return auction;
     }
-
-    public static ArrayList<Auction> getAuctions() throws Exception {
-        AuctionRepository.checkAndUpdateAuctions();
-        return AuctionRepository.getAuctions();
-    }
-
-    public static ArrayList<Auction> searchAuctions(String query) throws Exception {
-        AuctionRepository.checkAndUpdateAuctions();
-        if (query == null || query.isEmpty()) {
-            var errors = new ArrayList<String>();
-            errors.add("Auction search query is required");
-            throw new ValidationException(errors);
-        }
-        return AuctionRepository.searchAuctions(query);
-    }
-
     public static Bid getHighestBid(int id) throws Exception {
         AuctionRepository.checkAndUpdateAuctions();
         return BidRepository.getHighestBid(id);
@@ -132,13 +139,13 @@ public class AuctionService {
             errors.add("Auction is Closed");
         }
         Bid highestBid = BidRepository.getHighestBid(auction_id);
-        if(amount <= highestBid.getAmount()) {
+        if( highestBid != null && amount <= highestBid.getAmount()) {
             errors.add("Bid can't be less than equal to the current highest bid");
         }
         if(auction.getCreatedBy().getId() == created_by) {
             errors.add("You cannot bid on your listing");
         }
-        if(highestBid.getCreatedBy().getId() == created_by) {
+        if(highestBid != null && highestBid.getCreatedBy().getId() == created_by) {
             errors.add("You cannot outbid yourself");
         }
         if(amount < auction.getMinBid()) {
@@ -149,5 +156,20 @@ public class AuctionService {
         }
 
         BidRepository.addBid(auction_id, created_by, amount);
+    }
+
+    public static ArrayList<Auction> getAuctions() throws Exception {
+        AuctionRepository.checkAndUpdateAuctions();
+        return AuctionRepository.getAuctions();
+    }
+
+    public static ArrayList<Auction> searchAuctions(String query) throws Exception {
+        AuctionRepository.checkAndUpdateAuctions();
+        if (query == null || query.isEmpty()) {
+            var errors = new ArrayList<String>();
+            errors.add("Auction search query is required");
+            throw new ValidationException(errors);
+        }
+        return AuctionRepository.searchAuctions(query);
     }
 }
