@@ -172,4 +172,13 @@ public class AuctionService {
         }
         return AuctionRepository.searchAuctions(query);
     }
+
+    public static void closeAuction(int auction_id, int user_id) throws Exception {
+        var auction = AuctionService.getAuction(auction_id);
+        if(auction.getCreatedBy().getId() == user_id) {
+            AuctionRepository.closeAuction(auction_id);
+        } else {
+            throw new Exception("Only user who created auction can close it");
+        }
+    }
 }

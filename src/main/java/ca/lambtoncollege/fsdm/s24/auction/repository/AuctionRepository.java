@@ -74,6 +74,7 @@ public class AuctionRepository {
         }
     }
 
+
     public static ArrayList<Auction> searchAuctions(String query) throws SQLException {
         try (var connection = Database.getConnection()) {
             var statement = connection.prepareStatement("""
@@ -95,10 +96,25 @@ public class AuctionRepository {
                         UPDATE Auction SET state = 'ENDED' WHERE ends_at < NOW()
                     """);
             var rs = statement.executeUpdate();
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             throw new SQLException(e.getMessage());
         }
     }
+
+
+    public static void closeAuction(int auctionId) throws SQLException {
+        try (var connection = Database.getConnection()) {
+            var statement = connection.prepareStatement("""
+                        UPDATE Auction SET state = ? WHERE id = ?
+                    """);
+            statement.setString(1, Auction.State.Closed.toString());
+            statement.setInt(2, auctionId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new SQLException(e.getMessage());
+        }
+    }
+
 
     private static Auction fromResultSet(ResultSet rs) throws SQLException {
         var auction = new Auction();
@@ -110,7 +126,7 @@ public class AuctionRepository {
         auction.setCreatedBy(UserRepository.getUserById(rs.getInt("created_by")));
         auction.setState(Auction.State.fromString(rs.getString("state")));
         auction.setAuctionImage(rs.getBytes("image"));
-        if(rs.getBytes("image") != null) {
+        if (rs.getBytes("image") != null) {
             String base64Image = Base64.getEncoder().encodeToString(rs.getBytes("image"));
             auction.setImageBase64(base64Image);
         } else {
@@ -121,3 +137,4 @@ public class AuctionRepository {
 
 
 }
+

@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-
 @WebServlet(name = "signOutServlet", value = "/account/sign-out")
 public class SignOutServlet extends HttpServlet {
     @Override
