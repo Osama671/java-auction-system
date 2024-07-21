@@ -36,13 +36,14 @@ public class UpdateHighestBidderServlet extends HttpServlet {
             var userId = Integer.parseInt(req.getParameter("userId"));
             var userBid = Integer.parseInt(req.getParameter("bid"));
             var currentBid = (BidRepository.getHighestBid(auctionId) == null) ? Double.NEGATIVE_INFINITY : BidRepository.getHighestBid(auctionId).getAmount();
+            var minBid = AuctionRepository.getAuctionById(auctionId).getMinBid() / 100F;
 
-            if(userBid > currentBid){
+            if(userBid > currentBid && userBid > minBid){
                  BidRepository.addBid(auctionId, userId, userBid);
                  resp.sendRedirect(req.getContextPath() + "/auction/details?id=" + auctionId) ;
             }
             // Unsure what to do if user bid lower or equal to the highest bid
-            // Maybe validate it from the HTML and show error there? Can discuss it later.
+            // Would like to talke about it later thanks uwu :3
             else{
                 resp.sendRedirect(req.getContextPath() + "/auction/details?id=" + auctionId);
             }

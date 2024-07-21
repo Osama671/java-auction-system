@@ -51,7 +51,7 @@ Closes At: <%=auction.getEndsAt()%><br/>
     <form method="post" action="<%= request.getContextPath() %>/auction/updateBid">
         <h2>Highest bid: <%= highestBidAmount %></h2>
         <label for="bid">Bid:</label>
-        <input type="text" id="bid" name="bid" required><br><br>
+        <input type="text" id="bid" name="bid" pattern="\d+" title="Please enter a whole number" required><br><br>
         <input type="hidden" id="auctionId" name="auctionId" value="<%= auction.getId() %>">
         <input type="hidden" name="userId" value="<%=userId%>">
 
@@ -67,7 +67,6 @@ Closes At: <%=auction.getEndsAt()%><br/>
     <% } %>
 
     <input type="submit" value="Submit Bid">
-        <button type="submit">Submitto</button>
 </form>
 <% } else { %>
 <h3><%= AuctionHelper.getAuctionStateText(auction.getState()) %></h3>
@@ -79,7 +78,7 @@ Closes At: <%=auction.getEndsAt()%><br/>
     <button type="submit">Close Auction</button>
 </form>
 <% } %>
-<% if (auction.getState() == Auction.State.Closed && userId == auction.getCreatedBy().getId() && highestBid != null) { %>
+<% if ( (auction.getState() == Auction.State.Ended || auction.getState() == Auction.State.EndedEarly) && userId == auction.getCreatedBy().getId() && highestBid != null) { %>
     <h2>Bidder Name: <%= userHighestBid.getName()  %></h2>
     <h2>Bidder Contact: <%= userHighestBid.getEmail() %></h2>
 <% } %>
