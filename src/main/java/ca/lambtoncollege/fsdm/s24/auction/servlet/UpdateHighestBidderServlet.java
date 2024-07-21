@@ -19,6 +19,7 @@ public class UpdateHighestBidderServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         User user;
 
+
         try {
             user = AuthService.authenticate(req);
 
@@ -34,10 +35,11 @@ public class UpdateHighestBidderServlet extends HttpServlet {
             var auctionId = Integer.parseInt(req.getParameter("auctionId"));
             var userId = Integer.parseInt(req.getParameter("userId"));
             var userBid = Integer.parseInt(req.getParameter("bid"));
-            var currentBid = BidRepository.getHighestBid(auctionId).getAmount();
+            var currentBid = (BidRepository.getHighestBid(auctionId) == null) ? Double.NEGATIVE_INFINITY : BidRepository.getHighestBid(auctionId).getAmount();
+
             if(userBid > currentBid){
-                BidRepository.addBid(auctionId, userId, userBid);
-                resp.sendRedirect(req.getContextPath() + "/auction/details?id=" + auctionId) ;
+                 BidRepository.addBid(auctionId, userId, userBid);
+                 resp.sendRedirect(req.getContextPath() + "/auction/details?id=" + auctionId) ;
             }
             // Unsure what to do if user bid lower or equal to the highest bid
             // Maybe validate it from the HTML and show error there? Can discuss it later.
@@ -47,6 +49,7 @@ public class UpdateHighestBidderServlet extends HttpServlet {
 
         } catch (Exception e) {
             System.out.println(e);
+            resp.sendRedirect(req.getContextPath() + "/");
         }
     }
 

@@ -19,6 +19,7 @@
     Auction auction = (Auction) request.getAttribute("auction");
     Bid highestBid = (Bid) request.getAttribute("highestBid");
     User userHighestBid = (highestBid != null) ? (User) highestBid.getCreatedBy() : null;
+    var highestBidAmount = (highestBid != null && Integer.valueOf(highestBid.getAmount()) != null) ? highestBid.getAmount() : "No bid placed yet";
     int userId = (int) request.getAttribute("userId");
 %>
 
@@ -46,13 +47,13 @@ Closes At: <%=auction.getEndsAt()%><br/>
 
 <% if (auction.getCreatedBy().getId() == userId && auction.getState() == Auction.State.Open) { %>
 <h3>You can't bid on your listing</h3>
-<% } else if (auction.getState() == Auction.State.Open ) { %>
+<% } else if (auction.getState() == Auction.State.Open && auction.getCreatedBy().getId() != userId ) { %>
     <form method="post" action="<%= request.getContextPath() %>/auction/updateBid">
-        <h2>Highest bid: <%= highestBid.getAmount() %></h2>
-    <label for="bid">Bid:</label>
-    <input type="text" id="bid" name="bid" required><br><br>
-    <input type="hidden" id="auctionId" name="auctionId" value="<%= auction.getId() %>">
-    <input type="hidden" name="userId" value="<%=userId%>">
+        <h2>Highest bid: <%= highestBidAmount %></h2>
+        <label for="bid">Bid:</label>
+        <input type="text" id="bid" name="bid" required><br><br>
+        <input type="hidden" id="auctionId" name="auctionId" value="<%= auction.getId() %>">
+        <input type="hidden" name="userId" value="<%=userId%>">
 
     <% var errors = (String[]) request.getAttribute("errors");
         if (errors != null && errors.length > 0) { %>
@@ -66,6 +67,7 @@ Closes At: <%=auction.getEndsAt()%><br/>
     <% } %>
 
     <input type="submit" value="Submit Bid">
+        <button type="submit">Submitto</button>
 </form>
 <% } else { %>
 <h3><%= AuctionHelper.getAuctionStateText(auction.getState()) %></h3>
