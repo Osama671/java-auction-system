@@ -66,10 +66,15 @@ public class AuctionDetailsServlet extends HttpServlet {
         }
 
         var auctionId = req.getParameter("auctionId");
-        var bid = req.getParameter("bid");
+        var action = req.getParameter("action");
 
         try {
-            AuctionService.addBid(Integer.parseInt(auctionId), user.getId(), Integer.parseInt(bid) * 100);
+            if ("bid".equals(action)) {
+                var bid = req.getParameter("bid");
+                AuctionService.addBid(Integer.parseInt(auctionId), user.getId(), Integer.parseInt(bid) * 100);
+            } else if ("endAuction".equals(action)) {
+                AuctionService.endAuctionEarly(Integer.parseInt(auctionId), user.getId());
+            }
 
             resp.sendRedirect(req.getContextPath() + "/auction/details?id=" + auctionId);
         } catch (Exception e) {

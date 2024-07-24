@@ -101,20 +101,18 @@ public class AuctionRepository {
         }
     }
 
-
-    public static void closeAuction(int auctionId) throws SQLException {
+    public static void updateAuctionState(int auctionId, Auction.State state) throws SQLException {
         try (var connection = Database.getConnection()) {
             var statement = connection.prepareStatement("""
                         UPDATE Auction SET state = ? WHERE id = ?
                     """);
-            statement.setString(1, Auction.State.Closed.toString());
+            statement.setString(1, state.toString());
             statement.setInt(2, auctionId);
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new SQLException(e.getMessage());
         }
     }
-
 
     private static Auction fromResultSet(ResultSet rs) throws SQLException {
         var auction = new Auction();
