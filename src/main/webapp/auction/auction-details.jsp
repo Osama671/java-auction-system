@@ -7,6 +7,11 @@
     <title>Auction Details</title>
     <%@include file="/common.jsp" %>
     <script type="text/javascript" src="<%= request.getContextPath() %>/js/countdown.js" defer></script>
+    <script type="text/javascript">
+        function setFormAction(actionUrl) {
+            document.getElementById('auctionForm').action = actionUrl;
+        }
+    </script>
 </head>
 <body>
 <%@include file="../components/navbar.jsp" %>
@@ -29,7 +34,7 @@
 Auction id: <%=auction.getId()%><br/>
 Title: <%=auction.getTitle()%><br/>
 Min Bid: <%=auction.getMinBid() / 100F%><br/>
-Current Max Bix: <%= highestBid == null ? "No bids" : highestBid.getAmount() / 100F%><br/>
+Current Max Bid: <%= highestBid == null ? "No bids" : highestBid.getAmount() / 100F%><br/>
 Status: <%=auction.getState()%><br/>
 Closes At: <%=auction.getEndsAt()%><br/>
 <% if (auction.getImageBase64() != null) { %>
@@ -46,6 +51,7 @@ Closes At: <%=auction.getEndsAt()%><br/>
     <label for="bid">Bid:</label>
     <input type="text" id="bid" name="bid" required><br><br>
     <input type="hidden" id="auctionId" name="auctionId" value="<%= auction.getId() %>">
+    <input type="hidden" name="action" value="bid">
 
     <% var errors = (String[]) request.getAttribute("errors");
         if (errors != null && errors.length > 0) { %>
@@ -64,10 +70,11 @@ Closes At: <%=auction.getEndsAt()%><br/>
 <h3><%= AuctionHelper.getAuctionStateText(auction.getState()) %></h3>
 <% } %>
 
-<% if (userId == auction.getCreatedBy().getId() && auction.getState() == Auction.State.Open) { %>
-<form method="post" action="<%= request.getContextPath() %>/auction/close">
+<% if (userId == auction.getCreatedBy().getId() && auction.getState() == Auction.State.Open && highestBid != null) { %>
+<form id="auctionForm" method="post">
     <input type="hidden" name="auctionId" value="<%= auction.getId() %>">
-    <button type="submit">Close Auction</button>
+    <button type="submit" onclick="setFormAction('<%= request.getContextPath() %>/auction/close')">Close Auction</button>
+    <button type="submit" onclick="setFormAction('<%= request.getContextPath() %>/auction/details?action=endAuction')">End Auction</button>
 </form>
 <% } %>
 

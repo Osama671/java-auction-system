@@ -95,7 +95,7 @@ public class Auction {
     }
 
     public enum State {
-        Open, Closed, Ended, EndedEarly;
+        Open, Closed, Ended, ENDED_EARLY;
 
         public static State fromString(String state) {
             switch (state) {
@@ -109,7 +109,7 @@ public class Auction {
                     return Ended;
                 }
                 case "ENDED_EARLY" -> {
-                    return EndedEarly;
+                    return ENDED_EARLY;
                 }
                 default -> throw new Error("Invalid State");
             }
