@@ -173,10 +173,10 @@ public class AuctionService {
         return AuctionRepository.searchAuctions(query);
     }
 
-    public static void closeAuction(int auction_id, int user_id) throws Exception {
-        var auction = AuctionService.getAuction(auction_id);
+    public static void closeAuction(int auctionId, int user_id) throws Exception {
+        var auction = AuctionService.getAuction(auctionId);
         if(auction.getCreatedBy().getId() == user_id) {
-            AuctionRepository.closeAuction(auction_id);
+            AuctionRepository.updateAuctionState(auctionId, Auction.State.Closed);
         } else {
             throw new Exception("Only user who created auction can close it");
         }
@@ -185,7 +185,7 @@ public class AuctionService {
     public static void endAuctionEarly(int auctionId, int userId) throws Exception {
         Auction auction = getAuction(auctionId);
         if (auction.getCreatedBy().getId() == userId && auction.getState() == Auction.State.Open) {
-            AuctionRepository.endAuctionEarly(auctionId);
+            AuctionRepository.updateAuctionState(auctionId, Auction.State.EndedEarly);
         } else {
             throw new Exception("Only the creator can end the auction early and the auction must be open.");
         }
