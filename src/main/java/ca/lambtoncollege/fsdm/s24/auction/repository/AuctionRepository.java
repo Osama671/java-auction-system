@@ -120,7 +120,7 @@ public class AuctionRepository {
             var statement = connection.prepareStatement("""
                         UPDATE Auction SET state = ? WHERE id = ?
                     """);
-            statement.setString(1, Auction.State.ENDED_EARLY.name());
+            statement.setString(1, Auction.State.EndedEarly.toString());
             statement.setInt(2, auctionId);
             statement.executeUpdate();
         }catch (SQLException e) {

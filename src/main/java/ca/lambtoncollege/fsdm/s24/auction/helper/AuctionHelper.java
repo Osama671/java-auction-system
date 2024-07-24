@@ -8,7 +8,7 @@ public class AuctionHelper {
             case Open -> "Auction is Open";
             case Closed -> "Auction is closed";
             case Ended -> "Auction has ended";
-            case ENDED_EARLY -> "Auction ended early";
+            case EndedEarly -> "Auction ended early";
             default -> "Invalid state provided";
         };
     }
