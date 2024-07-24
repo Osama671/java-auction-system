@@ -20,7 +20,7 @@
     // Get the auction object from request attribute
     Auction auction = (Auction) request.getAttribute("auction");
     Bid highestBid = (Bid) request.getAttribute("highestBid");
-    User userHighestBid = (highestBid != null) ? (User) highestBid.getCreatedBy() : null;
+    User userHighestBid = (highestBid != null) ? highestBid.getCreatedBy() : null;
     int userId = (int) request.getAttribute("userId");
 %>
 
@@ -72,11 +72,15 @@ Closes At: <%=auction.getEndsAt()%><br/>
 <h3><%= AuctionHelper.getAuctionStateText(auction.getState()) %></h3>
 <% } %>
 
-<% if (userId == auction.getCreatedBy().getId() && auction.getState() == Auction.State.Open && highestBid != null) { %>
+<% if (userId == auction.getCreatedBy().getId() && auction.getState() == Auction.State.Open) { %>
 <form id="auctionForm" method="post">
     <input type="hidden" name="auctionId" value="<%= auction.getId() %>">
     <button type="submit" onclick="setFormAction('<%= request.getContextPath() %>/auction/close')">Close Auction</button>
-    <button type="submit" onclick="setFormAction('<%= request.getContextPath() %>/auction/details?action=endAuction')">End Auction</button>
+    <% if (highestBid != null) { %>
+    <button type="submit" onclick="setFormAction('<%= request.getContextPath() %>/auction/details?action=endAuction')">
+        End Auction
+    </button>
+    <% } %>
 </form>
 <% } %>
 
