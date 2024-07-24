@@ -1,6 +1,7 @@
 <%@ page import="ca.lambtoncollege.fsdm.s24.auction.model.Auction" %>
 <%@ page import="ca.lambtoncollege.fsdm.s24.auction.model.Bid" %>
 <%@ page import="ca.lambtoncollege.fsdm.s24.auction.helper.AuctionHelper" %>
+<%@ page import="ca.lambtoncollege.fsdm.s24.auction.model.User" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -14,6 +15,7 @@
     // Get the auction object from request attribute
     Auction auction = (Auction) request.getAttribute("auction");
     Bid highestBid = (Bid) request.getAttribute("highestBid");
+    User userHighestBid = (highestBid != null) ? (User) highestBid.getCreatedBy() : null;
     int userId = (int) request.getAttribute("userId");
 %>
 
@@ -69,6 +71,11 @@ Closes At: <%=auction.getEndsAt()%><br/>
     <input type="hidden" name="auctionId" value="<%= auction.getId() %>">
     <button type="submit">Close Auction</button>
 </form>
+<% } %>
+
+<% if ( (auction.getState() == Auction.State.Ended || auction.getState() == Auction.State.EndedEarly) && userId == auction.getCreatedBy().getId() && highestBid != null) { %>
+<h2>Bidder Name: <%= userHighestBid.getName()  %></h2>
+<h2>Bidder Contact: <%= userHighestBid.getEmail() %></h2>
 <% } %>
 
 <br>
