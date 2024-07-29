@@ -1,5 +1,7 @@
 package ca.lambtoncollege.fsdm.s24.auction.model;
 
+import ca.lambtoncollege.fsdm.s24.auction.helper.CurrencyHelper;
+
 public class Bid {
     private int id;
     private int auction_id;
@@ -28,5 +30,9 @@ public class Bid {
     }
     public void setAmount(int amount) {
         this.amount = amount;
+    }
+
+    public String getAmountDollars() {
+        return CurrencyHelper.asDollars(amount);
     }
 }

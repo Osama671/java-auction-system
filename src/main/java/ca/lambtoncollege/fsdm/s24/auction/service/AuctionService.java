@@ -122,7 +122,8 @@ public class AuctionService {
 
         return auction;
     }
-    public static Bid getHighestBid(int id) throws Exception {
+
+    public static Bid getHighestBid(int id) throws SQLException {
         AuctionRepository.checkAndUpdateAuctions();
         return BidRepository.getHighestBid(id);
     }
