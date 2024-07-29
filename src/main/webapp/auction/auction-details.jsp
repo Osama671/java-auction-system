@@ -89,6 +89,10 @@ Closes At: <%=auction.getEndsAt()%><br/>
 <h2>Bidder Contact: <%= userHighestBid.getEmail() %></h2>
 <% } %>
 
+<% if ((auction.getState() == Auction.State.Ended || auction.getState() == Auction.State.EndedEarly) && userId == userHighestBid.getId()) { %>
+<h2>Congratulations, you won this auction!</h2>
+<% } %>
+
 <br>
 <%-- <a href="<%= request.getContextPath() %>/auction/list">Back to Auction List</a>--%>
 </body>
