@@ -1,7 +1,5 @@
 <%@ page import="ca.lambtoncollege.fsdm.s24.auction.model.Auction" %>
-<%@ page import="ca.lambtoncollege.fsdm.s24.auction.model.Bid" %>
 <%@ page import="ca.lambtoncollege.fsdm.s24.auction.helper.AuctionHelper" %>
-<%@ page import="ca.lambtoncollege.fsdm.s24.auction.model.User" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -19,7 +17,6 @@
 
 <%
     ArrayList<Auction> auctions = (ArrayList<Auction>) request.getAttribute("auctions");
-    int userId = (int) request.getAttribute("userId");
 %>
 
 <div class="container ms-4 mt-5">
