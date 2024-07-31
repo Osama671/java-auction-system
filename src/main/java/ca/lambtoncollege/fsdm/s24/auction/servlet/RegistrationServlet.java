@@ -40,6 +40,10 @@ public class RegistrationServlet extends HttpServlet {
         try {
             UserService.createUser(email, name, password, confirmPassword);
 
+            var session = UserService.signIn(email, password);
+
+            resp.addCookie(AuthService.createSessionCookie(session));
+
             resp.sendRedirect(req.getContextPath() + "/");
         } catch (Exception e) {
             var errors = e instanceof ValidationException ? ((ValidationException) e).errors : new String[]{e.getMessage()};
