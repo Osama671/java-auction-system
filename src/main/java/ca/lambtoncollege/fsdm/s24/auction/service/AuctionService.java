@@ -164,6 +164,17 @@ public class AuctionService {
         return auctions;
     }
 
+    public static ArrayList<Auction> getMyAuctions(int userId) throws Exception {
+        var auctions = getAuctions();
+        ArrayList<Auction> newAuctions = new ArrayList<Auction>();
+        for (Auction auction : auctions){
+            if (auction.getCreatedBy().getId() == userId){
+                newAuctions.add(auction);
+            }
+        }
+        return newAuctions;
+    }
+
     public static ArrayList<Auction> searchAuctions(String query) throws Exception {
         AuctionRepository.checkAndUpdateAuctions();
         if (query == null || query.isEmpty()) {
