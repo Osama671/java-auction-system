@@ -39,8 +39,9 @@
     <%}%>
 
     <a class="btn btn-outline-dark mb-4" href="<%=request.getContextPath()%>/auction/create">Create Auction</a>
-
+    <% if (!auctions.isEmpty()) { %>
     <h1 class="row mb-4">Auctions</h1>
+    <% } %>
 
     <% for (Auction auction : auctions) {%>
     <div class="row">

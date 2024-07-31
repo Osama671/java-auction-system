@@ -23,7 +23,10 @@
     <% if (auctions.isEmpty()) {%>
     <h3>You don't have any auctions</h3>
     <%}%>
-    <h1 class="row mb-4">My Auctions</h1>
+
+    <% if (!auctions.isEmpty()) { %>
+    <h1 class="row mb-4">My auctions</h1>
+    <% } %>
 
 
     <% for (Auction auction : auctions) { %>
