@@ -44,6 +44,7 @@ public class CreateAuctionServlet extends HttpServlet {
         var minBid = req.getParameter("minBid");
         var endDate = req.getParameter("endDate");
         Part imagePart = req.getPart("auctionImage");
+        System.out.println(endDate);
         try {
             var user = AuthService.authenticate(req);
             var auction = AuctionService.createAuction(title, description, minBid, endDate, imagePart, user, req);
