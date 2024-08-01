@@ -81,6 +81,10 @@ public class UserService {
             throw new ValidationException(errors);
         }
 
+        return createSession(user);
+    }
+
+    public static Session createSession(User user) throws SQLException {
         var session = new Session();
         session.setSessionId(UUID.randomUUID());
         session.setUser(user);

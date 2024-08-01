@@ -1,33 +1,19 @@
 <%@ page import="ca.lambtoncollege.fsdm.s24.auction.model.Auction" %>
-<%@ page import="java.util.ArrayList" %>
 <%@ page import="ca.lambtoncollege.fsdm.s24.auction.helper.AuctionHelper" %>
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<!DOCTYPE html>
+<%@ page import="java.util.ArrayList" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
 <html>
 <head>
-    <title>JSP - Hello World</title>
-    <%@include file="common.jsp" %>
+    <title>Title</title>
+    <%@include file="/common.jsp" %>
     <script type="text/javascript" src="<%= request.getContextPath() %>/js/countdown.js" defer></script>
-    <style>
-        .auction {
-            transition: background-color ease-in 200ms;
-        }
 
-        .auction:hover {
-            background: var(--bs-gray-400);
-        }
-
-        .auction img {
-            transition: opacity ease-in 200ms;
-        }
-
-        .auction:hover img {
-            opacity: 60%;
-        }
-    </style>
 </head>
 <body>
-<%@include file="components/navbar.jsp" %>
+<%@include file="../components/navbar.jsp" %>
+
 
 <%
     ArrayList<Auction> auctions = (ArrayList<Auction>) request.getAttribute("auctions");
@@ -35,15 +21,15 @@
 
 <div class="container ms-4 mt-5">
     <% if (auctions.isEmpty()) {%>
-    <h3>No Auctions found</h3>
+    <h3>You don't have any auctions</h3>
     <%}%>
 
-    <a class="btn btn-outline-dark mb-4" href="<%=request.getContextPath()%>/auction/create">Create Auction</a>
     <% if (!auctions.isEmpty()) { %>
-    <h1 class="row mb-4">Auctions</h1>
+    <h1 class="row mb-4">My auctions</h1>
     <% } %>
 
-    <% for (Auction auction : auctions) {%>
+
+    <% for (Auction auction : auctions) { %>
     <div class="row">
         <a class="auction card col-8 mb-4 p-0 shadow text-decoration-none border-0"
            href="<%=request.getContextPath() + "/auction/details?id=" + auction.getId()%>">
@@ -74,6 +60,6 @@
     <% } %>
 </div>
 
+
 </body>
 </html>
-

@@ -1,6 +1,7 @@
 package ca.lambtoncollege.fsdm.s24.auction.servlet;
 
 import ca.lambtoncollege.fsdm.s24.auction.error.ValidationException;
+import ca.lambtoncollege.fsdm.s24.auction.model.User;
 import ca.lambtoncollege.fsdm.s24.auction.service.AuthService;
 import ca.lambtoncollege.fsdm.s24.auction.service.UserService;
 import jakarta.servlet.RequestDispatcher;
@@ -38,7 +39,11 @@ public class RegistrationServlet extends HttpServlet {
         var confirmPassword = req.getParameter("confirmPassword");
 
         try {
-            UserService.createUser(email, name, password, confirmPassword);
+            User newUser = UserService.createUser(email, name, password, confirmPassword);
+
+            var session = UserService.createSession(newUser);
+
+            resp.addCookie(AuthService.createSessionCookie(session));
 
             resp.sendRedirect(req.getContextPath() + "/");
         } catch (Exception e) {

@@ -18,8 +18,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Base64;
+import java.util.*;
 
 public class AuctionService {
     public static Auction createAuction(String title, String description, String minBid, String endDate, Part imagePart, User user, HttpServletRequest req) throws ValidationException, SQLException, IOException {
@@ -161,7 +160,20 @@ public class AuctionService {
 
     public static ArrayList<Auction> getAuctions() throws Exception {
         AuctionRepository.checkAndUpdateAuctions();
-        return AuctionRepository.getAuctions();
+        var auctions = AuctionRepository.getAuctions();
+        sortAuctions(auctions);
+        return auctions;
+    }
+
+    public static ArrayList<Auction> getMyAuctions(int userId) throws Exception {
+        var auctions = getAuctions();
+        ArrayList<Auction> newAuctions = new ArrayList<Auction>();
+        for (Auction auction : auctions){
+            if (auction.getCreatedBy().getId() == userId){
+                newAuctions.add(auction);
+            }
+        }
+        return newAuctions;
     }
 
     public static ArrayList<Auction> searchAuctions(String query) throws Exception {
@@ -171,7 +183,10 @@ public class AuctionService {
             errors.add("Auction search query is required");
             throw new ValidationException(errors);
         }
-        return AuctionRepository.searchAuctions(query);
+
+        var auctions = AuctionRepository.searchAuctions(query);
+        sortAuctions(auctions);
+        return auctions;
     }
 
     public static void closeAuction(int auctionId, int user_id) throws Exception {
@@ -190,5 +205,23 @@ public class AuctionService {
         } else {
             throw new Exception("Only the creator can end the auction early and the auction must be open.");
         }
+    }
+
+    private static void sortAuctions(List<Auction> auctions) {
+        Collections.sort(auctions, new Comparator<Auction>() {
+            @Override
+            public int compare(Auction a1, Auction a2) {
+                // First, compare by state to prioritize "Open" auctions
+                int stateComparison = a1.getState().compareTo(a2.getState());
+                if (stateComparison != 0) {
+                    if (a1.getState() == Auction.State.Open) return -1;
+                    if (a2.getState() == Auction.State.Open) return 1;
+                    return stateComparison;
+                }
+
+                // If states are the same, compare by endsAt date
+                return a1.getEndsAt().compareTo(a2.getEndsAt());
+            }
+        });
     }
 }
