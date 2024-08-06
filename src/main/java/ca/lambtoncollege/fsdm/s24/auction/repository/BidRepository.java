@@ -5,6 +5,7 @@ import ca.lambtoncollege.fsdm.s24.auction.model.Bid;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class BidRepository {
     public static Bid getHighestBid(int id) throws SQLException {
@@ -15,14 +16,31 @@ public class BidRepository {
             statement.setInt(1, id);
             System.out.println(statement);
             var rs = statement.executeQuery();
-            if(rs.next()) {
+            if (rs.next()) {
                 return bidFromResultSet(rs);
             }
             return null;
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             throw new SQLException(e.getMessage());
         }
     }
+
+    public static ArrayList<Bid> getBids() throws SQLException {
+        try (var connection = Database.getConnection()) {
+            var statement = connection.prepareStatement("""
+                        SELECT * FROM Bid
+                    """);
+
+            var rs = statement.executeQuery();
+            var bids = new ArrayList<Bid>();
+            while (rs.next()) {
+                bids.add(bidFromResultSet(rs));
+            }
+
+            return bids;
+        }
+    }
+
 
     public static void addBid(int auction_id, int created_by, int amount) throws SQLException {
         try (var connection = Database.getConnection()) {
@@ -33,7 +51,7 @@ public class BidRepository {
             statement.setInt(2, created_by);
             statement.setInt(3, amount);
             statement.executeUpdate();
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             throw new SQLException(e.getMessage());
         }
     }
