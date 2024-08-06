@@ -5,8 +5,6 @@ import ca.lambtoncollege.fsdm.s24.auction.model.Bid;
 import ca.lambtoncollege.fsdm.s24.auction.model.User;
 import ca.lambtoncollege.fsdm.s24.auction.service.AuctionService;
 import ca.lambtoncollege.fsdm.s24.auction.service.AuthService;
-import ca.lambtoncollege.fsdm.s24.auction.service.UserService;
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -65,7 +63,7 @@ public class AuctionDetailsServlet extends HttpServlet {
             return;
         }
 
-        var auctionId = req.getParameter("auctionId");
+        var auctionId = req.getParameter("id");
         var action = req.getParameter("action");
 
         try {

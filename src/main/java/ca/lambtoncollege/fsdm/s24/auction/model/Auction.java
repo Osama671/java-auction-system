@@ -1,5 +1,7 @@
 package ca.lambtoncollege.fsdm.s24.auction.model;
 
+import ca.lambtoncollege.fsdm.s24.auction.helper.CurrencyHelper;
+
 import java.time.Instant;
 
 public class Auction {
@@ -92,6 +94,10 @@ public class Auction {
 
     public void setImageBase64(String imageBase64) {
         this.imageBase64 = imageBase64;
+    }
+
+    public String getMinBidDollars() {
+        return CurrencyHelper.asDollars(minBid);
     }
 
     public enum State {
