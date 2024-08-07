@@ -6,16 +6,13 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public class Database {
-    private final static String jdbcURL = "jdbc:mysql://localhost:3306/auction";
-    private final static String username = "fsdm";
-    private final static String password = "fsdm";
     private final static BasicDataSource ds = new BasicDataSource();
 
     static {
         ds.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        ds.setUrl(jdbcURL);
-        ds.setUsername(username);
-        ds.setPassword(password);
+        ds.setUrl(getEnv("DB_URL", "jdbc:mysql://localhost:3306/auction"));
+        ds.setUsername(getEnv("DB_USERNAME", "fsdm"));
+        ds.setPassword(getEnv("DB_PASSWORD", "fsdm"));
         ds.setMinIdle(2);
         ds.setMaxIdle(20);
         ds.setMaxOpenPreparedStatements(20);
@@ -95,4 +92,15 @@ public class Database {
             connection.createStatement().execute(createQuery);
         }
     }
+
+    private static String getEnv(String name, String defaultValue) {
+        var env = System.getenv(name);
+
+        if (env == null || env.isEmpty()) {
+            return defaultValue;
+        }
+
+        return env;
+    }
+
 }
