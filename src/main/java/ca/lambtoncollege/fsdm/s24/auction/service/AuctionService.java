@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -68,7 +69,8 @@ public class AuctionService {
         } else if (endDate != null) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
             LocalDateTime localDateTime = LocalDateTime.parse(endDate, formatter);
-            endDateInstant = localDateTime.toInstant(ZoneOffset.UTC);
+            endDateInstant = localDateTime.atZone(ZoneId.of("America/Toronto")).toInstant();
+            System.out.println(endDateInstant.toString());
         }
 
         if (endDateInstant.isBefore(Instant.now())) {
