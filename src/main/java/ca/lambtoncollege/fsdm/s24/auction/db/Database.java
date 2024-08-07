@@ -1,25 +1,29 @@
 package ca.lambtoncollege.fsdm.s24.auction.db;
 
+import org.apache.commons.dbcp2.BasicDataSource;
+
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class Database {
     private final static String jdbcURL = "jdbc:mysql://localhost:3306/auction";
     private final static String username = "fsdm";
     private final static String password = "fsdm";
+    private final static BasicDataSource ds = new BasicDataSource();
 
     static {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        ds.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        ds.setUrl(jdbcURL);
+        ds.setUsername(username);
+        ds.setPassword(password);
+        ds.setMinIdle(2);
+        ds.setMaxIdle(20);
+        ds.setMaxOpenPreparedStatements(20);
     }
 
     public static Connection getConnection() {
         try {
-            return DriverManager.getConnection(jdbcURL, username, password);
+            return ds.getConnection();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
