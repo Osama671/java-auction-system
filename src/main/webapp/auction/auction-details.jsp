@@ -12,6 +12,7 @@
         .description {
             white-space: pre;
         }
+
     </style>
 </head>
 <body>
@@ -51,7 +52,7 @@
         <img class="col-6 h-auto" src="data:image/jpeg;base64,<%=auction.getImageBase64()%>" alt="Auction Image"/>
         <div class="col-6">
             <h4 class="row">Description:</h4>
-            <p class="description row"><%=auction.getDescription()%>
+            <p class="description row text-wrap justify-content-center"><%=auction.getDescription()%>
             </p>
 
             <% if (highestBid != null) { %>
